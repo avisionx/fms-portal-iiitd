@@ -1,0 +1,28 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+<div class="bg-gradient v-center h-center px-3" style="min-height: 100vh;">
+  <div class="container py-4 px-0 px-lg-5">
+    <div class="row bg-white py-5 mx-0 mx-lg-5 rounded-lg shadow" style="min-height: 70vh;">
+      
+      <div class="col-12 col-lg-6 v-center h-center">
+        <img src="{% static 'images/logout-image.svg' %}" class="w-50" alt="Login">
+      </div>
+      
+      <div class="col-12 col-lg-6 v-center h-center">
+        <div style="width: 85%" class="text-center">
+          <h2 class="text-info font-weight-bold mb-1 mt-lg-0 text-center">Logged Out</h2>
+          <p class="font-weight-light text-info">You have been logged out successfully!</p>
+          <div class="text-center mt-3 h5">
+            <a href="{% url 'login' %}" class="btn btn-success rounded-pill w-50 mt-4">Log back in <i class="pl-1 fas fa-sign-in-alt"></i></a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+    

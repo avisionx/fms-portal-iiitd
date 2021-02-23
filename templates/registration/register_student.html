@@ -1,0 +1,103 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block content %}
+
+<div class="bg-gradient v-center h-center px-3" style="min-height: 100vh;">
+  <div class="container py-4">
+    <div class="row bg-white py-5 rounded-lg shadow" style="min-height: 80vh;">
+
+      <div class="col-12 col-lg-6 v-center h-center">
+        <img src="{% static 'images/register-image.svg' %}" class="w-75" alt="Login">
+      </div>
+
+      <div class="col-12 col-lg-6 v-center h-center">
+        <div style="width: 85%">
+          <h2 class="text-info font-weight-bold mb-4 mb-lg-5 mt-5 mt-lg-0 text-center">Register Student</h2>
+          <form method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="input-group mb-2 mr-sm-2 border py-2 px-3 rounded-pill input-container">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-user text-primary" aria-hidden="true"></i></div>
+              </div>
+              <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder="First Name"
+                name="first_name" autofocus="" autocapitalize="none" autocomplete="first-name" maxlength="150"
+                required="" id="id_first_name">
+            </div>
+            <div class="input-group mb-2 mr-sm-2 border py-2 px-3 rounded-pill input-container">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-user text-primary" aria-hidden="true"></i></div>
+              </div>
+              <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder="Last Name"
+                name="last_name" autofocus="" autocapitalize="none" autocomplete="last-name" maxlength="150" required=""
+                id="id_last_name">
+            </div>
+            <div class="input-group mb-2 mr-sm-2 border py-2 px-3 rounded-pill input-container">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-envelope text-primary" aria-hidden="true"></i></div>
+              </div>
+              <input type="email" class="form-control border-0 rounded-pill bg-transparent" placeholder="Email"
+                name="username" autofocus="" autocapitalize="none" autocomplete="email" maxlength="254" required=""
+                id="id_username">
+            </div>
+            <div class="input-group mb-2 mr-sm-2 border py-2 px-3 rounded-pill input-container">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-phone text-primary" aria-hidden="true"></i></div>
+              </div>
+              <input type="tel" class="form-control border-0 rounded-pill bg-transparent" placeholder="Mobile Number"
+                name="contact" autofocus="" autocapitalize="none" required="" pattern="[7-9]{1}[0-9]{9}"
+                title="Phone number starting with 7-9 and remaing 9 digits between 0-9." id="id_contact">
+            </div>
+            <div class="input-group mb-2 mr-sm-2 border py-2 px-3 rounded-pill input-container">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-key text-primary"></i></div>
+              </div>
+              <input type="password" class="form-control border-0 rounded-pill bg-transparent" placeholder="Password"
+                name="password1" autocomplete="new-password" required="" id="id_password1">
+            </div>
+            <div class="input-group mb-2 mr-sm-2 border py-2 px-3 rounded-pill input-container">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-key text-primary"></i></div>
+              </div>
+              <input type="password" class="form-control border-0 rounded-pill bg-transparent"
+                placeholder="Re-enter Password" name="password2" autocomplete="new-password" required=""
+                id="id_password2">
+            </div>
+            <input type="submit" class="btn btn-lg btn-success rounded-pill w-100 mt-4" value="Register" />
+          </form>
+
+          {% if error.password %}
+          <div class="alert alert-danger small px-3 rounded-pill text-small" role="alert">
+            Passwords didn't match.
+          </div>
+          {% endif %}
+
+          {% if error.unique %}
+          <div class="alert alert-danger small px-3 rounded-pill text-small" role="alert">
+            Email already registered.
+          </div>
+          {% endif %}
+
+          {% if error.iiitd %}
+          <div class="alert alert-danger small px-3 rounded-pill text-small" role="alert">
+            Please use IIIT Delhi emails only.
+          </div>
+          {% endif %}
+
+          <div class="text-center mt-4 mt-lg-5">
+            <p class="text-info small font-weight-light">Already have an account? Login <a href="{% url 'login' %}"
+                class="text-primary">here.</a></p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

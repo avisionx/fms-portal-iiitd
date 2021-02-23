@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+<div>
+  <nav class="navbar navbar-light bg-white shadow fixed-top px-3 px-lg-5">
+    <a href="{% url 'index' %}" class="navbar-brand">
+      <img src="{% static 'images/crams-logo.svg' %}" height="40" alt="CRAMS">
+    </a>
+    <ul class="nav ml-auto">
+      <li class="nav-item dropdown v-center">
+        <a href="{% url 'login' %}" class="btn btn-outline-success rounded-pill px-3 btn-sm"><i
+            class="fas fa-user mr-1"></i>
+          Login <span class="d-none d-lg-inline"> / Register</span></a>
+      </li>
+    </ul>
+  </nav>
+  <div class="v-center" style="height: 100vh; width: 100vw;">
+    <div class="text-center w-100">
+      <img src="{% static 'images/error-icon.svg' %}" width="40%" alt="">
+      <h5 class="mt-4 px-5">Oops! Looks like there was some error. <a href="{% url 'index' %}">Go Back Home?</a></h5>
+    </div>
+  </div>
+</div>
+{% endblock %}

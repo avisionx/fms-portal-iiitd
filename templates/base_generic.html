@@ -1,0 +1,38 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/ico" href="{% static 'images/favicon.ico' %}">
+
+  {% block title %}
+  <title>FMS Portal IIITD</title>
+  <meta name="title" content="FMS Portal IIITD">
+  {% endblock %}
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+
+  {% block content %}{% endblock %}
+
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/popper.js' %}"></script>
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+
+  {% block script %}{% endblock %}
+
+</body>
+
+</html>

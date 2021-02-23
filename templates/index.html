@@ -1,0 +1,9 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+Landing Page
+<a href="{% url 'login' %}">Login</a>
+<a href="{% url 'student_signup' %}">Sign Up</a>
+<a href="{% url 'track_complaint' %}">Track Complaint</a>
+<a href="{% url 'regsiter_complaint' %}">Register Complaint</a>
+{% endblock %}
