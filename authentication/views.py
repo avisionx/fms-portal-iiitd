@@ -1,17 +1,16 @@
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
 
-from .models import FMS, Student, User
+from .models import FMS, Customer, User
 
 
-def StudentSignUpView(request):
+def CustomerSignUpView(request):
 
     error = {
         "password": False,
         "unique": False,
         "iiitd": False
     }
-
 
     if request.method == "POST":
         username = request.POST["username"]
@@ -34,50 +33,13 @@ def StudentSignUpView(request):
                     first_name=first_name,
                     last_name=last_name
                 )
-                user.is_student = True
+                user.is_customer = True
                 user.save()
-                student = Student.objects.create(user=user, contact=contact)
-                student.save()
+                customer = Customer.objects.create(user=user, contact=contact)
+                customer.save()
                 login(request, user)
-                return redirect('student_home')
+                return redirect('customer_dashboard')
             except Exception as inst:
                 error["unique"] = True
 
-    return render(request, "registration/register_student.html", {'error': error})
-
-
-# def FacultySignUpView(request):
-
-#     error = {
-#         "password": False,
-#         "unique": False
-#     }
-
-#     if request.method == "POST":
-#         username = request.POST["username"]
-#         pass1 = request.POST["password1"]
-#         pass2 = request.POST["password2"]
-#         first_name = request.POST["first_name"]
-#         last_name = request.POST["last_name"]
-
-#         if(pass1 != pass2):
-#             error["password"] = True
-#         else:
-#             try:
-#                 user = User.objects.create_user(
-#                     username=username,
-#                     password=pass1,
-#                     email=username,
-#                     first_name=first_name,
-#                     last_name=last_name
-#                 )
-#                 user.is_faculty = True
-#                 user.save()
-#                 faculty = Faculty.objects.create(user=user)
-#                 login(request, user)
-#                 return redirect('dashboard')
-#             except Exception as inst:
-#                 print(inst)
-#                 error["unique"] = True
-
-#     return render(request, "registration/register_faculty.html", {'error': error})
+    return render(request, "registration/register_customer.html", {'error': error})

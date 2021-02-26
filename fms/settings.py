@@ -11,8 +11,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
-
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'authentication'
+    'authentication',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +128,7 @@ STATICFILES_DIRS = (
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 AUTH_USER_MODEL = 'authentication.User'
-LOGIN_REDIRECT_URL = 'student_home'
+LOGIN_REDIRECT_URL = 'customer_dashboard'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
@@ -141,5 +140,3 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_USE_SSL = False
 # EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 # EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-
-

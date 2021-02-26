@@ -13,7 +13,7 @@
       <div class="col-12 col-lg-6 v-center h-center">
         <div style="width: 85%">
 
-          <h2 class="text-info font-weight-bold mb-4 mb-lg-5 mt-5 mt-lg-0 text-center">Student Login</h2>
+          <h2 class="text-info font-weight-bold mb-4 mb-lg-5 mt-5 mt-lg-0 text-center">User Login</h2>
 
           <form method="post" class="mb-4" action="{% url 'login' %}">
             {% csrf_token %}
@@ -59,7 +59,7 @@
           {% endif %}
 
           <div class="text-center mt-4 mt-lg-5">
-            <p class="text-info small font-weight-light">Don't have an account? <a href="{% url 'student_signup' %}"
+            <p class="text-info small font-weight-light">Don't have an account? <a href="{% url 'customer_signup' %}"
                 class="text-primary font-weight-light">
                 Register here.</a></p>
 

@@ -1,14 +1,10 @@
+from authentication.decorators import customer_required
 from django.contrib.auth import logout
 from django.shortcuts import render
 
-from authentication.decorators import student_required
 
 def HomeView(request):
     return render(request, "index.html")
-
-@student_required
-def StudentHomeView(request):
-    return render(request, "students/home.html")
 
 
 def LogoutView(request):

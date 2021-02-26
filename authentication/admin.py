@@ -1,12 +1,12 @@
-from django.contrib.auth.models import Group
 from django.contrib import admin
+from django.contrib.auth.models import Group
 
-from .models import FMS, Student, User
+from .models import FMS, Customer, User
 
 
-class StudentAdmin(admin.ModelAdmin):
-    model = Student
-    verbose_name_plural = 'Students'
+class CustomerAdmin(admin.ModelAdmin):
+    model = Customer
+    verbose_name_plural = 'Customers'
 
 
 class FMSAdmin(admin.ModelAdmin):
@@ -21,5 +21,5 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.unregister(Group)
 admin.site.register(User, UserAdmin)
-admin.site.register(Student, StudentAdmin)
+admin.site.register(Customer, CustomerAdmin)
 admin.site.register(FMS, FMSAdmin)
