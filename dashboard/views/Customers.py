@@ -1,7 +1,9 @@
 from authentication.decorators import customer_required
-from django.shortcuts import render
+from dashboard.forms import ComplaintForm
+from django.contrib import messages
+from django.contrib.messages import get_messages
+from django.shortcuts import redirect, render
 
-from .forms import ComplaintForm
 
 @customer_required
 def dashboard(request):
@@ -17,12 +19,19 @@ def track_complaint(request):
 
 @customer_required
 def register_complaint(request):
-    context = {"register_link": "active"}
-    form  = ComplaintForm(request.POST or None)
-    if form.is_valid(): 
-        # save the form data to model 
-        form.save() 
-    context['form'] = form
+
+    complaintForm = ComplaintForm(request.POST or None)
+
+    context = {
+        "register_link": "active",
+        "complaintForm": complaintForm
+    }
+
+    if complaintForm.is_valid():
+        complaintForm.save(request.user)
+        messages.success(
+            request, "Your complaint has been registerd!")
+        return redirect('customer_track_complaint')
 
     return render(request, 'customer/register_complaint.html', context)
 

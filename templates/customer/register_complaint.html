@@ -6,15 +6,9 @@
 {% block page_content %}
 <div class="container-fluid pt-1 pt-lg-3">
     <h2 class="text-info mb-0 font-weight-bold py-2">Register New Complaint</h2>
-    
-    <form method="post">
-    {% csrf_token %}
-    {% crispy form %}
-    <button type="submit" class="btn btn-primary">Sign in</button>
-  </form>
     <div class="row mt-2">
         <div class="col">
-            HELLO
+            {% crispy complaintForm %}
         </div>
     </div>
 </div>
