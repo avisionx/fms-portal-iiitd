@@ -30,6 +30,10 @@ class Complaint(models.Model):
         choices=LOCATION_CHOICES,
         default=1
     )
+    rating = models.IntegerField(
+        default=0
+    )
+    feedback = models.TextField(default="", blank=True)
     location_desc = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

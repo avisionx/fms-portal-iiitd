@@ -118,6 +118,18 @@ def complaint_api(request, slug):
         return redirect("/courses")
 
 
+@customer_required
+def submit_feedback(request):
+    stars = request.POST['stars']
+    feedbackDesc = request.POST['feedbackDesc']
+    complaintId = request.POST['complaintId']
+    complaint = Complaint.objects.get(complaint_id=complaintId)
+    complaint.rating = stars
+    complaint.feedback = feedbackDesc
+    complaint.save()
+    return JsonResponse({"status": 200}, safe=False)
+
+
 def get_days(ttime):
     day = ttime // (24 * 3600)
     ttime = ttime % (24 * 3600)
@@ -137,6 +149,8 @@ def extractComplaintObj(complaint):
         'category': complaint_get_category(complaint['fields']['category']),
         'desc': complaint['fields']['description'],
         'created_at': created_at,
-        'active': complaint['fields']['active']
+        'active': complaint['fields']['active'],
+        'rating': complaint['fields']['rating'],
+        'feedback': complaint['fields']['feedback']
     }
     return temp

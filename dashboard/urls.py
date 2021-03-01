@@ -8,5 +8,6 @@ urlpatterns = [
          name='customer_track_complaint'),
     path('edit-profile/', Customers.edit_profile, name='customer_edit_profile'),
     path('api-notification/', Customers.notif_api, name="notif_api"),
-    re_path(r'^api-complaint/(?P<slug>[\w-]+)/$', Customers.complaint_api)
+    re_path(r'^api-complaint/(?P<slug>[\w-]+)/$', Customers.complaint_api),
+    path('submit-feedback/', Customers.submit_feedback, name="submit_feedback"),
 ]

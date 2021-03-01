@@ -17,7 +17,7 @@ class ComplaintAdmin(admin.ModelAdmin):
     list_filter = (
         'active',
     )
-    readonly_fields = ('created_at', 'updated_at', )
+    readonly_fields = ('created_at', 'updated_at', 'rating', 'feedback')
 
 
 class NotifAdmin(admin.ModelAdmin):
