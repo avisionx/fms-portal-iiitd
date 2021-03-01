@@ -51,7 +51,31 @@ def dashboard(request):
 
 @customer_required
 def track_complaint(request):
-    context = {"track_link": "active"}
+
+    userComplaints = Complaint.objects.filter(
+        customer=request.user.customer).order_by('-created_at')
+
+    complaints = []
+    complaintsData = json.loads(serialize(userComplaints))
+
+    for complaint in complaintsData:
+        created_at = parse_datetime(
+            complaint['fields']['created_at']).strftime("%I:%M %p, %d %b %Y")
+        temp = {
+            'id': complaint['pk'],
+            'location': complaint_get_location(complaint['fields']['location']),
+            'category': complaint_get_category(complaint['fields']['category']),
+            'desc': complaint['fields']['description'],
+            'created_at': created_at,
+            'active': complaint['fields']['active']
+        }
+        complaints.append(temp)
+
+    context = {
+        "track_link": "active",
+        "complaints": complaints
+    }
+
     return render(request, 'customer/track_complaint.html', context)
 
 

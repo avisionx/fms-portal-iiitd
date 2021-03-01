@@ -4,14 +4,61 @@
 {% block page_content %}
 <div class="container-fluid pt-1 pt-lg-3">
     <h2 class="text-info mb-0 font-weight-bold py-2">Track Complaints</h2>
-    <div class="row mt-2">
-        <div class="col">
-            HELLO
+    <div class="input-group border px-1 mb-3 rounded-pill">
+        <div class="input-group-prepend">
+            <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-search text-secondary" aria-hidden="true"></i></div>
         </div>
+        <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder="Search "
+            id="searchBox">
+    </div>
+    <div class="row mt-2">
+        {% for complaint in complaints %}
+        <div class="col-12 col-lg-4 complaintContainer">
+            <div class="my-2">
+                <div class="card-body shadow-sm bg-white rounded-lg px-3 py-3">
+                    <h5 class="mb-1 font-weight-bold">{{complaint.location}} - {{complaint.category}}</h5>
+                    <div class="mb-0 smaller row">
+                        <div class="col">
+                            {% if complaint.active %}
+                            <span class="badge bg-warning">Active</span>
+                            {% else %}
+                            <span class="badge bg-success">Closed</span>
+                            {% endif %}
+                        </div>
+                        <div class="ml-auto col-auto text-right">{{complaint.created_at}}</div>
+                    </div>
+                    <p class="small mb-1 mt-1">{{ complaint.desc | truncatechars:50}}</p>
+                    <a href="#{{complaint.id}}" class="w-100 btn btn-sm btn-outline-success">Complaint Details <i
+                            class="fas fa-arrow-right ml-1 small"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
 
 {% block page_script %}
+<script>
+    $("#searchBox").keyup((event) => {
+        search_complaint(event);
+    })
+
+    function search_complaint(event) {
+        event.preventDefault();
+        input = $("#searchBox").val().toLowerCase();
+        let x = document.getElementsByClassName('card-body');
+        for (i = 0; i < x.length; i++) {
+            var title = x[i].children[0].innerHTML;
+            var status = x[i].children[1].children[0].children[0].innerHTML;
+            if (!title.toLowerCase().includes(input) && !status.toLowerCase().includes(input)) {
+                $(x[i].parentNode.parentNode).addClass("d-none");
+            } else {
+                $(x[i].parentNode.parentNode).removeClass("d-none");
+            }
+        }
+    }
+</script>
 
 {% endblock %}
