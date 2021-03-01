@@ -24,17 +24,7 @@ def dashboard(request):
     complaintsData = json.loads(serialize(userComplaints))
 
     for complaint in complaintsData:
-        created_at = parse_datetime(
-            complaint['fields']['created_at']).strftime("%I:%M %p, %d %b %Y")
-        temp = {
-            'id': complaint['pk'],
-            'location': complaint_get_location(complaint['fields']['location']),
-            'category': complaint_get_category(complaint['fields']['category']),
-            'desc': complaint['fields']['description'],
-            'created_at': created_at,
-            'active': complaint['fields']['active']
-        }
-        complaints.append(temp)
+        complaints.append(extractComplaintObj(complaint))
 
     context = {
         "dashboard_link": "active",
@@ -61,17 +51,7 @@ def track_complaint(request):
     complaintsData = json.loads(serialize(userComplaints))
 
     for complaint in complaintsData:
-        created_at = parse_datetime(
-            complaint['fields']['created_at']).strftime("%I:%M %p, %d %b %Y")
-        temp = {
-            'id': complaint['pk'],
-            'location': complaint_get_location(complaint['fields']['location']),
-            'category': complaint_get_category(complaint['fields']['category']),
-            'desc': complaint['fields']['description'],
-            'created_at': created_at,
-            'active': complaint['fields']['active']
-        }
-        complaints.append(temp)
+        complaints.append(extractComplaintObj(complaint))
 
     context = {
         "track_link": "active",
@@ -120,7 +100,22 @@ def notif_api(request):
 
         return JsonResponse({"data": list(qs)}, safe=False)
     else:
-        return redirect("/dashboard")
+        return redirect("customer_dashboard")
+
+
+@customer_required
+def complaint_api(request, slug):
+    if request.is_ajax():
+        try:
+            complaint = Complaint.objects.get(complaint_id=slug)
+        except:
+            return JsonResponse({"status": 404}, safe=False)
+
+        complaint = json.loads(serialize([complaint]))[0]
+
+        return JsonResponse({"status": 200, "data": extractComplaintObj(complaint)}, safe=False)
+    else:
+        return redirect("/courses")
 
 
 def get_days(ttime):
@@ -131,3 +126,17 @@ def get_days(ttime):
         return ("%d days ago" % (day))
     else:
         return ("%d hrs ago" % (hour))
+
+
+def extractComplaintObj(complaint):
+    created_at = parse_datetime(
+        complaint['fields']['created_at']).strftime("%I:%M %p, %d %b %Y")
+    temp = {
+        'id': complaint['pk'],
+        'location': complaint_get_location(complaint['fields']['location']),
+        'category': complaint_get_category(complaint['fields']['category']),
+        'desc': complaint['fields']['description'],
+        'created_at': created_at,
+        'active': complaint['fields']['active']
+    }
+    return temp

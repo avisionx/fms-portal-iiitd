@@ -205,6 +205,7 @@ input:-webkit-autofill {
 }
 
 .content {
+    position: relative;
     width: calc(100vw - 250px);
     margin-left: 250px;
     transition-duration: 300ms;
@@ -277,6 +278,40 @@ input:-webkit-autofill {
 .v-scroll>a {
     display: inline-block;
     text-decoration: none
+}
+
+.bg-translucent {
+    background: rgba(0, 0, 0, .5);
+}
+
+
+
+.dashModalBody {
+    animation: modalShow 300ms;
+}
+
+@keyframes modalShow {
+    0% {
+        transform: scale(0)
+    }
+
+    100% {
+        transform: scale(1)
+    }
+}
+
+.dashModalContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+    display: none;
+}
+
+.dashModalContainer.show {
+    display: block;
 }
 
 .bg-translucent {
