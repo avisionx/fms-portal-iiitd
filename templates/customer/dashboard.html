@@ -44,18 +44,20 @@
                                 </div>
                                 <div class="ml-auto col-auto text-right">{{complaint.created_at}}</div>
                             </div>
-                            <p class="small mb-1 mt-1">{{ complaint.desc | truncatechars:50}}</p>
+                            <p class="small mb-1 mt-1">{{ complaint.desc | truncatechars:65}}</p>
                             <a href="{% url 'customer_track_complaint' %}#{{complaint.id}}"
                                 class="w-100 btn btn-sm btn-outline-success">Complaint Details <i
                                     class="fas fa-arrow-right ml-1 small"></i></a>
                         </div>
                     </div>
                     {% endfor %}
+                    {% if complaints %}
                     <div class="text-center small mb-1 mt-lg-2">
                         <a href="{% url 'customer_track_complaint' %}">
                             More Complaints <i class="fas fa-chevron-right ml-2 small"></i>
                         </a>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

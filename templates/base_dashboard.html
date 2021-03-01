@@ -13,9 +13,21 @@
             </span>
         </div>
         <a href="{% url 'customer_dashboard' %}" class="navbar-brand ml-4 pl-3 pl-lg-0 ml-lg-3">
-            FMS IIITD
+            FMS Portal IIITD
         </a>
         <ul class="nav ml-auto">
+            <li class="nav-item dropdown v-center">
+                <a class="nav-link pr-2 font-weight-light py-0" style="font-size: 1.3em" href="#" id="messageDropdown"
+                    role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="far fa-bell">
+                        <span id="notifDot" class="d-none">&nbsp;</span>
+                    </i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right border-0 shadow rounded-0 mt-3 customScroll"
+                    class="notifDropDown" id="notificationBox" aria-labelledby="messageDropdown">
+                    <a class="dropdown-item notifDropDown-item small text-center">No new notifications!</a>
+                </div>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link v-center pr-0 pr-lg-3" href="#" id="profileDropdown" role="button"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -83,6 +95,25 @@
         $(".hamburger").toggleClass("is-active");
         $(".content").toggleClass("show");
         $("#sidebar").toggleClass("show");
+    }
+
+    fetchData("{% url 'notif_api' %}", populateNotification);
+
+    function populateNotification(notifs) {
+        if (notifs.data.length != 0) {
+            $("#notifDot").removeClass('d-none');
+            for (var i = 0; i < notifs.data.length; i++) {
+                var notifMsg = notifs.data[i].msg;
+                var notifDate = notifs.data[i].created_at;
+                var ele = '<div class="dropdown-item notifDropDown-item small px-3"><p class="mb-1 text-wrap">' +
+                    notifMsg + '</p><p class="mb-1 text-secondary small text-right">' + notifDate + '</p></div>';
+                if (i == 0) {
+                    $("#notificationBox").html(ele);
+                } else {
+                    $("#notificationBox").append(ele);
+                }
+            }
+        }
     }
 </script>
 

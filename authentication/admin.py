@@ -6,17 +6,32 @@ from .models import FMS, Customer, User
 
 class CustomerAdmin(admin.ModelAdmin):
     model = Customer
-    verbose_name_plural = 'Customers'
+    list_display = (
+        'user',
+        'contact'
+    )
 
 
 class FMSAdmin(admin.ModelAdmin):
     model = FMS
-    verbose_name_plural = 'FMS'
+    list_display = (
+        'user',
+    )
 
 
 class UserAdmin(admin.ModelAdmin):
     model = User
-    verbose_name_plural = 'Users'
+    list_display = (
+        'first_name',
+        'last_name',
+        'email',
+        'is_customer',
+        'is_fms'
+    )
+    list_filter = (
+        'is_customer',
+        'is_fms'
+    )
 
 
 admin.site.unregister(Group)

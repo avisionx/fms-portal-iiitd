@@ -39,6 +39,16 @@ class Complaint(models.Model):
         return "Complaint No: " + str(self.complaint_id)
 
 
+class Notification(models.Model):
+    msg = models.TextField(default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.msg
+
+
 def complaint_get_location(val):
     for a, b in Complaint.LOCATION_CHOICES:
         if a == val:

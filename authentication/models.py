@@ -6,22 +6,37 @@ from django.utils import timezone
 
 
 class User(AbstractUser):
+
     is_customer = models.BooleanField(default=False)
     is_fms = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+
 
 class Customer(models.Model):
+
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True)
     contact = models.IntegerField()
 
+    class Meta:
+        verbose_name = 'Customer'
+        verbose_name_plural = 'Customers'
+
     def __str__(self):
-        return 'Customer: ' + str(self.user.username)
+        return str(self.user.username)
 
 
 class FMS(models.Model):
+
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True)
 
+    class Meta:
+        verbose_name = 'FMS'
+        verbose_name_plural = 'FMS'
+
     def __str__(self):
-        return 'FMS: ' + str(self.user.username)
+        return str(self.user.username)

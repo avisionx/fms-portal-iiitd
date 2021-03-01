@@ -3,12 +3,14 @@ from datetime import datetime
 
 from authentication.decorators import customer_required
 from dashboard.forms import ComplaintForm
-from dashboard.models import (Complaint, complaint_get_category,
+from dashboard.models import (Complaint, Notification, complaint_get_category,
                               complaint_get_location, serialize)
 from django.contrib import messages
 from django.contrib.messages import get_messages
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.dateparse import parse_datetime
+from django.utils.timezone import utc
 
 
 @customer_required
@@ -103,3 +105,29 @@ def edit_profile(request):
     }
 
     return render(request, "customer/edit_profile.html", {'msg': msg, 'formData': formData})
+
+
+@customer_required
+def notif_api(request):
+    if request.is_ajax():
+        now = datetime.now()
+        qs = Notification.objects.filter(active=True).values(
+            'msg', 'created_at').order_by('-created_at')
+
+        for q in qs:
+            timediff = now - q['created_at']
+            q['created_at'] = get_days(timediff.total_seconds())
+
+        return JsonResponse({"data": list(qs)}, safe=False)
+    else:
+        return redirect("/dashboard")
+
+
+def get_days(ttime):
+    day = ttime // (24 * 3600)
+    ttime = ttime % (24 * 3600)
+    hour = ttime // 3600
+    if day:
+        return ("%d days ago" % (day))
+    else:
+        return ("%d hrs ago" % (hour))
