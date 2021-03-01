@@ -39,9 +39,9 @@ class ComplaintForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2 mb-lg-3'
-        self.helper.field_class = 'col-lg-10 mb-2 mb-lg-3'
+        self.helper.form_class = 'form-vertical'
+        self.helper.label_class = 'mb-0 mb-lg-1'
+        self.helper.field_class = 'mb-2 mb-lg-3'
         self.helper.layout = Layout(
             Fieldset(
                 '',

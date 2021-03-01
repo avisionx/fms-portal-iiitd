@@ -1,4 +1,5 @@
 from authentication.models import Customer
+from django.core import serializers
 from django.db import models
 from django.urls import reverse
 
@@ -36,3 +37,21 @@ class Complaint(models.Model):
 
     def __str__(self):
         return "Complaint No: " + str(self.complaint_id)
+
+
+def complaint_get_location(val):
+    for a, b in Complaint.LOCATION_CHOICES:
+        if a == val:
+            return b
+    return Complaint.LOCATION_CHOICES[0][1]
+
+
+def complaint_get_category(val):
+    for a, b in Complaint.COMPLAINT_CATEGORIES:
+        if a == val:
+            return b
+    return Complaint.COMPLAINT_CATEGORIES[0][1]
+
+
+def serialize(object):
+    return serializers.serialize("json", object)

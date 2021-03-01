@@ -137,6 +137,14 @@ LOGIN_REDIRECT_URL = 'customer_dashboard'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
+TIME_ZONE = 'Asia/Calcutta'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = False
+
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
     messages.INFO: 'alert-info',
