@@ -3,11 +3,11 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from .views import HomeView, LogoutView
+from .views import HomeView, LoginRedirectView, LogoutView
 
 urlpatterns = [
     path('', HomeView, name='index'),
-    path('admin/', admin.site.urls),
+    path('login_redirects/', LoginRedirectView, name='login-redirects'),
     path('', include('dashboard.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup/customer/',

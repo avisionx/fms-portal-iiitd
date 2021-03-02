@@ -1,10 +1,17 @@
-from authentication.decorators import customer_required
 from django.contrib.auth import logout
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 
 def HomeView(request):
     return render(request, "index.html")
+
+
+def LoginRedirectView(request):
+    if request.user.is_customer:
+        return redirect('customer_dashboard')
+    elif request.user.is_fms:
+        return redirect('admin_dashboard')
+    return redirect('index')
 
 
 def LogoutView(request):

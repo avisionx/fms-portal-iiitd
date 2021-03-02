@@ -1,0 +1,118 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block head %}
+{% block dash_head %}{% endblock %}
+{% endblock %}
+{% block content %}
+<div>
+    <nav class="navbar navbar-light bg-white border fixed-top px-3">
+        <div class="hamburger hamburger--arrowalt d-block d-lg-none mr-auto text-primary pl-0 v-center py-0 pt-1"
+            type="button" onclick="toggleSidenav()">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="navbar-brand ml-4 pl-3 pl-lg-0 ml-lg-3 py-0">
+            <img src="{% static 'images/logo.svg' %}" alt="FMS Portal IIITD" height="42px">
+        </a>
+        <ul class="nav ml-auto">
+            <li class="nav-item dropdown v-center">
+                <a class="nav-link pr-2 font-weight-light py-0" style="font-size: 1.3em" href="#" id="messageDropdown"
+                    role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="far fa-bell">
+                        <span id="notifDot" class="d-none">&nbsp;</span>
+                    </i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right border-0 shadow rounded-0 mt-3 customScroll"
+                    class="notifDropDown" id="notificationBox" aria-labelledby="messageDropdown">
+                    <a class="dropdown-item notifDropDown-item small text-center">No new notifications!</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link v-center pr-0 pr-lg-3" href="#" id="profileDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="https://ui-avatars.com/api/?background=47a06e&color=fff&name={{ user.first_name | lower }}+{{ user.last_name | lower }}"
+                        width="30px" class="rounded-circle" alt="{{user.first_name}}">
+                    <p class="mb-0 pl-2 small d-none d-lg-block pt-1">{{user.first_name}} {{user.last_name}}</p>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right border-0 shadow rounded-0 mt-3 mr-2 mr-lg-0 small"
+                    aria-labelledby="profileDropdown">
+                    <a class="dropdown-item small pl-3" href="{% url 'admin_edit_profile' %}"><i
+                            class="fas fa-user-edit pr-2"></i> Edit Profile</a>
+                    <a class="dropdown-item small pl-3" href="{% url 'password_reset' %}"><i
+                            class="fas fa-key pr-2"></i> Reset Password</a>
+                    <a class="dropdown-item small pl-3" href="{% url 'logout' %}"><i
+                            class="fas fa-sign-out-alt pr-2"></i> Logout</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <div class="wrapper">
+        <nav id="sidebar" class="bg-white">
+            <ul class="list-unstyled" id="sidenav">
+                <li class="{{ dashboard_link }} sideTab">
+                    <a href="{% url 'admin_dashboard' %}"><i class="fas fa-th-large"></i>Dashboard</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="content rounded pb-4" style="background: #F2F3F7">
+            {% for message in messages %}
+            <div class="container-fluid p-0">
+                <div class="alert {{ message.tags }} alert-dismissible mb-0" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            </div>
+            {% endfor %}
+            {% block page_content %} {% endblock %}
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+
+<script type="text/javascript">
+    $(".sideTab").on('click', (e) => {
+        $(e.target).children().click();
+    });
+
+    $(".content").on('click', () => {
+        $(".content").removeClass("show");
+        $("#sidebar").removeClass("show");
+        $(".hamburger").removeClass("is-active");
+    });
+
+    function toggleSidenav() {
+        $(".hamburger").toggleClass("is-active");
+        $(".content").toggleClass("show");
+        $("#sidebar").toggleClass("show");
+    }
+
+    fetchData("{% url 'notif_api' %}", populateNotification);
+
+    function populateNotification(notifs) {
+        if (notifs.data.length != 0) {
+            $("#notifDot").removeClass('d-none');
+            for (var i = 0; i < notifs.data.length; i++) {
+                var notifMsg = notifs.data[i].msg;
+                var notifDate = notifs.data[i].created_at;
+                var ele = '<div class="dropdown-item notifDropDown-item small px-3"><p class="mb-1 text-wrap">' +
+                    notifMsg + '</p><p class="mb-1 text-secondary small text-right">' + notifDate + '</p></div>';
+                if (i == 0) {
+                    $("#notificationBox").html(ele);
+                } else {
+                    $("#notificationBox").append(ele);
+                }
+            }
+        }
+    }
+</script>
+
+{% block page_script %} {% endblock %}
+
+{% endblock %}
