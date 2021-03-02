@@ -13,6 +13,46 @@ def dashboard(request):
 
 
 @fms_required
+def complaints(request):
+
+    context = {
+        "complaints_link": "active"
+    }
+
+    return render(request, 'admin/complaints.html', context)
+
+
+@fms_required
+def feedbacks(request):
+
+    context = {
+        "feedbacks_link": "active"
+    }
+
+    return render(request, 'admin/feedbacks.html', context)
+
+
+@fms_required
+def fms_users(request):
+
+    context = {
+        "fms_users_link": "active"
+    }
+
+    return render(request, 'admin/fms_users.html', context)
+
+
+@fms_required
+def notifications(request):
+
+    context = {
+        "notifications_link": "active"
+    }
+
+    return render(request, 'admin/notifications.html', context)
+
+
+@fms_required
 def edit_profile(request):
     msg = {
         "save": False

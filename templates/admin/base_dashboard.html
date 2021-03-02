@@ -53,6 +53,18 @@
                 <li class="{{ dashboard_link }} sideTab">
                     <a href="{% url 'admin_dashboard' %}"><i class="fas fa-th-large"></i>Dashboard</a>
                 </li>
+                <li class="{{ complaints_link }} sideTab">
+                    <a href="{% url 'admin_complaints' %}"><i class="fas fa-clipboard-list"></i>Complaints</a>
+                </li>
+                <li class="{{ feedbacks_link }} sideTab">
+                    <a href="{% url 'admin_feedbacks' %}"><i class="fas fa-comments"></i>Feedbacks</a>
+                </li>
+                <li class="{{ fms_users_link }} sideTab">
+                    <a href="{% url 'admin_fms_users' %}"><i class="fas fa-users"></i>FMS Users</a>
+                </li>
+                <li class="{{ notifications_link }} sideTab">
+                    <a href="{% url 'admin_notifications' %}"><i class="fas fa-bell"></i>Notifications</a>
+                </li>
             </ul>
         </nav>
         <div class="content rounded pb-4" style="background: #F2F3F7">

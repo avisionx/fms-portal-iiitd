@@ -14,6 +14,14 @@ urlpatterns = [
     path('submit-feedback/', Customers.submit_feedback, name="submit_feedback"),
 
     path('admin/dashboard', Admin.dashboard, name='admin_dashboard'),
+    path('admin/complaints', Admin.complaints, name='admin_complaints'),
+    path('admin/feedbacks', Admin.feedbacks, name='admin_feedbacks'),
+    path('admin/fms-users', Admin.fms_users, name='admin_fms_users'),
+    path('admin/notifications', Admin.notifications, name='admin_notifications'),
     path('admin/edit-profile/', Admin.edit_profile, name='admin_edit_profile'),
+
+
+
+
 
 ]
