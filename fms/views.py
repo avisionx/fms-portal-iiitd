@@ -7,6 +7,10 @@ def HomeView(request):
 
 
 def LoginRedirectView(request):
+    if request.user.is_superuser:
+        request.user.is_fms = True
+        request.user.is_customer = False
+        request.user.save()
     if request.user.is_customer:
         return redirect('customer_dashboard')
     elif request.user.is_fms:
