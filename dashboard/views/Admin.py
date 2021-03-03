@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from authentication.decorators import fms_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.forms.widgets import TextInput
 from django.shortcuts import render
@@ -58,13 +59,24 @@ class ComplaintFilter(FilterSet):
 @ fms_required
 def complaints(request):
 
-    f = ComplaintFilter(
+    filtered_complaints = ComplaintFilter(
         request.GET, queryset=Complaint.objects.all().order_by('-created_at')
     )
 
+    paginator = Paginator(filtered_complaints.qs, 20)
+    page = request.GET.get('page', 1)
+
+    try:
+        res = paginator.page(page)
+    except PageNotAnInteger:
+        res = paginator.page(1)
+    except EmptyPage:
+        res = paginator.page(paginator.num_pages)
+
     context = {
         "complaints_link": "active",
-        'filter': f
+        'filter': filtered_complaints,
+        'complaints': res
     }
 
     return render(request, 'admin/complaints.html', context)

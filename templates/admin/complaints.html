@@ -1,10 +1,10 @@
 {% extends "admin/base_dashboard.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
-
+{% load param_replace_tags %}
 
 {% block page_content %}
-<div class="container-fluid pt-1 pt-lg-3">
+<div class="container-fluid pt-1 pt-lg-3 d-flex h-100 flex-column">
     <h2 class="text-info mb-0 font-weight-bold pt-2">Complaints</h2>
     <form method="GET" name="submit">
         <div class="row">
@@ -37,7 +37,7 @@
         </div>
     </form>
     <div class="row mt-4">
-        {% for complaint in filter.qs %}
+        {% for complaint in complaints %}
         <div class="col-12 col-lg-4 mb-4 complaintContainer">
             <div class="h-100">
                 <div class="card-body shadow-sm bg-white rounded-lg p-4 h-100 d-flex flex-column">
@@ -77,6 +77,43 @@
         </div>
         {% endfor %}
     </div>
+    {% if complaints.has_other_pages %}
+
+
+    <nav class="mt-auto">
+        <ul class="pagination justify-content-center mb-0">
+            {% if complaints.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=complaints.previous_page_number %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for i in complaints.paginator.page_range %}
+            {% if complaints.number == i %}
+            <li class="page-item active">
+                <a class="page-link" href="#">{{i}}</a>
+            </li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?{% param_replace page=i %}">{{i}}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if complaints.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{% param_replace page=complaints.next_page_number %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 
 
