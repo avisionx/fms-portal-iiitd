@@ -1,11 +1,13 @@
 from datetime import datetime
 
 from authentication.decorators import fms_required
+from dashboard.forms import NotificationForm
+from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.forms.widgets import TextInput
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django_filters import (CharFilter, ChoiceFilter, DateTimeFilter,
                             FilterSet, OrderingFilter)
 
@@ -99,12 +101,21 @@ def fms_users(request):
 @fms_required
 def notifications(request):
 
-    qs = Notification.objects.all().order_by('created_at', '-active')
+    notificationForm = NotificationForm(request.POST or None)
+
+    qs = Notification.objects.all().order_by('-created_at')
 
     context = {
         "notifications_link": "active",
-        'notifications': qs
+        'notifications': qs,
+        'notificationForm': notificationForm
     }
+
+    if notificationForm.is_valid():
+        notificationForm.save()
+        messages.success(
+            request, "Your notification has been registerd!")
+        return redirect('admin_notifications')
 
     return render(request, 'admin/notifications.html', context)
 
@@ -121,7 +132,6 @@ def edit_profile(request):
         request.user.first_name = first_name
         request.user.last_name = last_name
         request.user.save()
-        request.user.customer.save()
         msg["save"] = True
 
     formData = {
@@ -142,4 +152,17 @@ def complaint_action(request):
     else:
         complaint.active = False
     complaint.save()
+    return JsonResponse({"status": 200}, safe=False)
+
+
+@fms_required
+def notification_action(request):
+    pk = request.POST['id']
+    status = request.POST['status']
+    notification = Notification.objects.get(pk=pk)
+    if int(status) == 1:
+        notification.delete()
+    else:
+        notification.active = False
+        notification.save()
     return JsonResponse({"status": 200}, safe=False)

@@ -23,9 +23,9 @@
                     <div class="mb-0 smaller row">
                         <div class="col">
                             {% if complaint.active %}
-                            <span class="badge bg-warning">Active</span>
+                            <span class="badge bg-success">Active</span>
                             {% else %}
-                            <span class="badge bg-success">Closed</span>
+                            <span class="badge bg-secondary">Closed</span>
                             {% endif %}
                         </div>
                         <div class="ml-auto col-auto text-right">{{complaint.created_at}}</div>
@@ -59,8 +59,8 @@
                     <div class="mb-0 small">
                         <div class="col">
                             Status:
-                            <span class="badge bg-warning" id="complaintActive">Active</span>
-                            <span class="badge bg-success" id="complaintClosed">Closed</span>
+                            <span class="badge bg-success" id="complaintActive">Active</span>
+                            <span class="badge bg-secondary" id="complaintClosed">Closed</span>
                         </div>
                     </div>
                     <p class="mt-2 mb-0 font-weight-bold">Complaint Detail</p>

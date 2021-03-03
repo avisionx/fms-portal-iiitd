@@ -64,9 +64,9 @@
                         <div class="col">
                             Status:
                             {% if complaint.active %}
-                            <span class="badge bg-warning">Active</span>
+                            <span class="badge bg-success">Active</span>
                             {% else %}
-                            <span class="badge bg-success">Closed</span>
+                            <span class="badge bg-secondary">Closed</span>
                             {% endif %}
                         </div>
                         <div class="ml-auto col-auto text-right">{{complaint.created_at}}</div>
@@ -148,15 +148,18 @@
                         class="fas fa-circle-notch fa-spin"></i></div>
                 <div id="complaintModalContent" class="pt-1 px-lg-3 pt-lg-2 d-none">
                     <h4 class="mb-2 font-weight-bold" id="complaintTitle"></h4>
-                    <p class="mb-0 small">Complaint ID: <span id="complaintId"></span></p>
-                    <p class="mb-0 small">Date: <span id="complaintDate"></span></p>
-                    <p class="mb-0 small">Location: <span id="complaintLocation"></span></p>
-                    <p class="mb-0 small">Category: <span id="complaintCategory"></span></p>
-                    <div class="mb-0 small">
+                    <p class="mb-0 ">Complaint ID: <span id="complaintId"></span></p>
+                    <p class="mb-0 ">Name: <span id="complaintName"></span></p>
+                    <p class="mb-0 ">Contact: <span id="complaintContact"></span></p>
+                    <p class="mb-0 ">Email: <span id="complaintEmail"></span></p>
+                    <p class="mb-0 ">Date: <span id="complaintDate"></span></p>
+                    <p class="mb-0 ">Location: <span id="complaintLocation"></span></p>
+                    <p class="mb-0 ">Category: <span id="complaintCategory"></span></p>
+                    <div class="mb-0 ">
                         <div class="col">
                             Status:
-                            <span class="badge bg-warning" id="complaintActive">Active</span>
-                            <span class="badge bg-success" id="complaintClosed">Closed</span>
+                            <span class="badge bg-success" id="complaintActive">Active</span>
+                            <span class="badge bg-secondary" id="complaintClosed">Closed</span>
                         </div>
                     </div>
                     <p class="mt-2 mb-0 font-weight-bold">Complaint Detail</p>
@@ -234,6 +237,7 @@
     }
 
     function populateComplaintModal(complaint) {
+        console.log(complaint.data)
         if (complaint.status === 404 || !complaint.data) {
             hideComplaintInfo(null)
             return;
@@ -245,6 +249,9 @@
         $("#complaintLocation").html(complaint.data.location)
         $("#complaintCategory").html(complaint.data.category)
         $("#complaintDesc").html(complaint.data.desc)
+        $("#complaintName").html(complaint.data.name)
+        $("#complaintContact").html(complaint.data.contact)
+        $("#complaintEmail").html(complaint.data.email)
 
         if (complaint.data.active) {
             $("#complaintActive").removeClass("d-none");

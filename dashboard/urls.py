@@ -18,5 +18,7 @@ urlpatterns = [
     path('admin/fms-users/', Admin.fms_users, name='admin_fms_users'),
     path('admin/notifications/', Admin.notifications, name='admin_notifications'),
     path('admin/edit-profile/', Admin.edit_profile, name='admin_edit_profile'),
-    path('complaint-action/', Admin.complaint_action, name='complaint_action')
+    path('complaint-action/', Admin.complaint_action, name='complaint_action'),
+    path('notification-action/', Admin.notification_action,
+         name='notification_action')
 ]

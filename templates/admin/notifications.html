@@ -1,16 +1,107 @@
 {% extends "admin/base_dashboard.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block page_content %}
 <div class="container-fluid pt-1 pt-lg-3">
-    <h2 class="text-info mb-0 font-weight-bold py-2">Notifications</h2>
-    {% for notification in notifications %}
-    {{notification.msg}}
-    {% endfor %}
+    <h2 class="text-info mb-0 font-weight-bold py-2 d-flex v-center">
+        Notifications
+        <span class="ml-auto">
+            <Button class="btn btn-primary btn-sm py-2 px-3 btn-success" data-toggle="collapse"
+                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Create <i
+                    class="fas fa-plus ml-1 small"></i></Button>
+        </span>
+    </h2>
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body mb-3 mt-1">
+
+            {% crispy notificationForm %}
+
+        </div>
+    </div>
+    <div class="input-group border px-1 mb-3 rounded-pill">
+        <div class="input-group-prepend">
+            <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-search text-secondary" aria-hidden="true"></i></div>
+        </div>
+        <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder="Search "
+            id="searchBox">
+    </div>
+
+    <div class="row mt-3">
+        {% for notification in notifications %}
+        <div class="col-12 mb-3">
+            <div class="card-body hover-shadow bg-white rounded-lg">
+                <div class="row">
+                    <div class="col">
+                        <p class="mb-0">{{notification.msg | truncatechars:140}}</p>
+                    </div>
+                    <div class="col-auto">
+                        {% if notification.active %}
+                        <Button class="btn btn-sm smaller btn-warning"
+                            onclick="notifInactive('{{notification.pk}}')">Inactive
+                            <i class="fas fa-power-off small"></i></Button>
+                        {% else %}
+                        <Button class="btn btn-sm smaller btn-danger"
+                            onclick="notifDelete('{{notification.pk}}')">Delete
+                            <i class="fas fa-times"></i></Button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col smaller d-flex v-center">
+                    Status:
+                    {% if notification.active %}
+                    <span class="badge bg-success ml-1">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary ml-1">Inactive</span>
+                    {% endif %}
+                </div>
+                <p class="mb-0 smaller">
+                    <i class="fas fa-calendar"></i> {{notification.created_at}}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 
 {% endblock %}
 
 {% block page_script %}
+<script>
+    function notificationAction(id, status) {
+        sendData("{% url 'notification_action' %}", {
+            id: id,
+            status: status
+        }, () => {
+            location.reload()
+        })
+    }
+
+    function notifInactive(id) {
+        notificationAction(id, 0);
+    }
+
+    function notifDelete(id) {
+        notificationAction(id, 1)
+    }
+    $("#searchBox").keyup((event) => {
+        search_notif(event);
+    })
+
+    function search_notif(event) {
+        event.preventDefault();
+        input = $("#searchBox").val().toLowerCase();
+        let x = document.getElementsByClassName('card-body');
+        for (i = 0; i < x.length; i++) {
+            var title = x[i].children[0].children[0].innerHTML;
+            if (!title.toLowerCase().includes(input)) {
+                $(x[i].parentNode).addClass("d-none");
+            } else {
+                $(x[i].parentNode).removeClass("d-none");
+            }
+        }
+    }
+</script>
 {% endblock %}

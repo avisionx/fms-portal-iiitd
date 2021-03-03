@@ -346,3 +346,8 @@ input:-webkit-autofill {
     background-color: #47a06e !Important;
     border: solid 1px #47a06e;
 }
+
+.hover-shadow:hover {
+    -webkit-box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 15%) !important;
+    box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 15%) !important;
+}

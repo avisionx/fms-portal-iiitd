@@ -33,9 +33,12 @@ def complaint_api(request, slug):
         except:
             return JsonResponse({"status": 404}, safe=False)
 
-        complaint = json.loads(serialize([complaint]))[0]
+        customer_info = {'name': complaint.customer.user.first_name + " " + complaint.customer.user.last_name,
+                         'email': complaint.customer.user.email,
+                         'contact': complaint.customer.contact}
 
-        return JsonResponse({"status": 200, "data": extractComplaintObj(complaint)}, safe=False)
+        complaint = json.loads(serialize([complaint]))[0]
+        return JsonResponse({"status": 200, "data": {**extractComplaintObj(complaint), **customer_info}}, safe=False)
     else:
         return redirect("/courses")
 
