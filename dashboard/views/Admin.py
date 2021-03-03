@@ -4,21 +4,12 @@ from authentication.decorators import fms_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.forms.widgets import TextInput
+from django.http import JsonResponse
 from django.shortcuts import render
 from django_filters import (CharFilter, ChoiceFilter, DateTimeFilter,
                             FilterSet, OrderingFilter)
 
-from ..models import Complaint
-
-
-@fms_required
-def dashboard(request):
-
-    context = {
-        "dashboard_link": "active"
-    }
-
-    return render(request, 'admin/dashboard.html', context)
+from ..models import Complaint, Notification
 
 
 class ComplaintFilter(FilterSet):
@@ -31,6 +22,9 @@ class ComplaintFilter(FilterSet):
 
     location = ChoiceFilter(field_name='location',
                             empty_label='All', choices=Complaint.LOCATION_CHOICES, label='Complaint Location')
+
+    rating = ChoiceFilter(field_name='rating',
+                          empty_label='Any', choices=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), ), label='Rating')
 
     created_at = DateTimeFilter(
         field_name='created_at',
@@ -56,7 +50,17 @@ class ComplaintFilter(FilterSet):
         )
 
 
-@ fms_required
+@fms_required
+def dashboard(request):
+
+    context = {
+        "dashboard_link": "active"
+    }
+
+    return render(request, 'admin/dashboard.html', context)
+
+
+@fms_required
 def complaints(request):
 
     filtered_complaints = ComplaintFilter(
@@ -82,17 +86,7 @@ def complaints(request):
     return render(request, 'admin/complaints.html', context)
 
 
-@ fms_required
-def feedbacks(request):
-
-    context = {
-        "feedbacks_link": "active"
-    }
-
-    return render(request, 'admin/feedbacks.html', context)
-
-
-@ fms_required
+@fms_required
 def fms_users(request):
 
     context = {
@@ -102,17 +96,20 @@ def fms_users(request):
     return render(request, 'admin/fms_users.html', context)
 
 
-@ fms_required
+@fms_required
 def notifications(request):
 
+    qs = Notification.objects.all().order_by('created_at', '-active')
+
     context = {
-        "notifications_link": "active"
+        "notifications_link": "active",
+        'notifications': qs
     }
 
     return render(request, 'admin/notifications.html', context)
 
 
-@ fms_required
+@fms_required
 def edit_profile(request):
     msg = {
         "save": False
@@ -133,3 +130,16 @@ def edit_profile(request):
     }
 
     return render(request, "admin/edit_profile.html", {'msg': msg, 'formData': formData})
+
+
+@fms_required
+def complaint_action(request):
+    complaintId = request.POST['id']
+    status = request.POST['status']
+    complaint = Complaint.objects.get(complaint_id=complaintId)
+    if int(status) == 1:
+        complaint.active = True
+    else:
+        complaint.active = False
+    complaint.save()
+    return JsonResponse({"status": 200}, safe=False)

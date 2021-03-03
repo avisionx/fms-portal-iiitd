@@ -87,21 +87,6 @@ def edit_profile(request):
 
 
 @customer_required
-def complaint_api(request, slug):
-    if request.is_ajax():
-        try:
-            complaint = Complaint.objects.get(complaint_id=slug)
-        except:
-            return JsonResponse({"status": 404}, safe=False)
-
-        complaint = json.loads(serialize([complaint]))[0]
-
-        return JsonResponse({"status": 200, "data": extractComplaintObj(complaint)}, safe=False)
-    else:
-        return redirect("/courses")
-
-
-@customer_required
 def submit_feedback(request):
     stars = request.POST['stars']
     feedbackDesc = request.POST['feedbackDesc']
