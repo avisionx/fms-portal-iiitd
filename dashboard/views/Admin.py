@@ -1,5 +1,9 @@
 from authentication.decorators import fms_required
 from django.shortcuts import render
+from django_filters import (CharFilter, FilterSet, NumberFilter,
+                            OrderingFilter, TimeRangeFilter)
+
+from ..models import Complaint
 
 
 @fms_required
@@ -12,11 +16,45 @@ def dashboard(request):
     return render(request, 'admin/dashboard.html', context)
 
 
+class ComplaintFilter(FilterSet):
+
+    o = OrderingFilter(
+        choices=(
+            ('rating', 'Rating Asc'),
+            ('-rating', 'Rating Desc'),
+            ('created_at', 'Created Oldest First'),
+            ('-created_at', 'Created Latest First'),
+            ('updated_at', 'Updated Oldest First'),
+            ('-updated_at', 'Updated Lastest First'),
+        )
+    )
+
+    customer__user__username = CharFilter(lookup_expr='contains')
+    customer__contact = NumberFilter(lookup_expr='contains')
+    complaint_id = NumberFilter(
+        field_name='complaint_id', lookup_expr='contains')
+
+    class Meta:
+        model = Complaint
+        fields = {
+            'category': ['exact'],
+            'location': ['exact'],
+            'rating': ['gte'],
+            'created_at': ['gte'],
+            'updated_at': ['gte'],
+            'active': ['exact']
+        }
+
+
 @fms_required
 def complaints(request):
 
+    f = ComplaintFilter(
+        request.GET, queryset=Complaint.objects.all().order_by('-created_at'))
+
     context = {
-        "complaints_link": "active"
+        "complaints_link": "active",
+        'filter': f
     }
 
     return render(request, 'admin/complaints.html', context)
