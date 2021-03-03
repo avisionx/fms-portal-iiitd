@@ -20,5 +20,7 @@ urlpatterns = [
     path('admin/edit-profile/', Admin.edit_profile, name='admin_edit_profile'),
     path('complaint-action/', Admin.complaint_action, name='complaint_action'),
     path('notification-action/', Admin.notification_action,
-         name='notification_action')
+         name='notification_action'),
+    path('fms-user-action/', Admin.fms_user_action,
+         name='fms_user_action')
 ]

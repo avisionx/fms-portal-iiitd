@@ -1,14 +1,121 @@
 {% extends "admin/base_dashboard.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block page_content %}
 <div class="container-fluid pt-1 pt-lg-3">
-    <h2 class="text-info mb-0 font-weight-bold py-2">FMS Users</h2>
+    <h2 class="text-info mb-0 font-weight-bold py-2 d-flex v-center">
+        FMS User
+        <span class="ml-auto">
+            <Button class="btn btn-primary btn-sm py-2 px-3 btn-success" data-toggle="collapse"
+                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Create <i
+                    class="fas fa-plus ml-1 small"></i></Button>
+        </span>
+    </h2>
+    <div class="collapse" id="collapseExample">
+        <div class="card p-4 mb-3 mt-1">
+
+            {% crispy fmsUserForm %}
+
+        </div>
+    </div>
+    <div class="input-group border px-1 mb-3 rounded-pill">
+        <div class="input-group-prepend">
+            <div class="input-group-text bg-transparent border-0 rounded-pill pr-0"><i
+                    class="fas fa-search text-secondary" aria-hidden="true"></i></div>
+        </div>
+        <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder="Search "
+            id="searchBox">
+    </div>
+
+    <div class="row mt-3">
+        {% for fmsUser in fmsUsers %}
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card-body hover-shadow bg-white rounded-lg">
+                <div class="col-12">
+                    <h5 class="text-primary mb-1"><i class="fas fa-user"></i> {{fmsUser.user.first_name}}
+                        {{fmsUser.user.last_name}}
+                    </h5>
+                    <p class="mb-0 small">Email: {{fmsUser.user.email}}</p>
+                </div>
+                <div class="col-12 smaller d-flex v-center">
+                    Status:
+                    {% if fmsUser.user.is_active %}
+                    <span class="badge bg-success ml-1">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary ml-1">Inactive</span>
+                    {% endif %}
+                </div>
+                <p class="mb-0 smaller">
+                    Last Login: {{fmsUser.user.last_login}}
+                </p>
+                <p class="mb-0 smaller">
+                    Created On: {{fmsUser.user.date_joined}}
+                </p>
+                <div class="col-12 mt-2">
+                    {% if fmsUser.user.is_active %}
+                    <Button class="btn btn-sm smaller btn-warning" onclick="fmsDeactive('{{fmsUser.pk}}')">
+                        Deactivate
+                        <i class="fas fa-power-off small"></i></Button>
+                    {% else %}
+                    <div class="d-flex">
+                        <Button class="btn btn-sm smaller btn-warning" onclick="fmsActive('{{fmsUser.pk}}')">
+                            Reactivate
+                            <i class="fas fa-redo small"></i></Button>
+                        <Button class="btn btn-sm smaller btn-danger ml-auto" onclick="fmsDelete('{{fmsUser.pk}}')">
+                            Delete
+                            <i class="fas fa-times"></i></Button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 
 {% endblock %}
 
 {% block page_script %}
+<script>
+    function fmsUserAction(id, status) {
+        sendData("{% url 'fms_user_action' %}", {
+            id: id,
+            status: status
+        }, () => {
+            location.reload()
+        })
+    }
 
+    function fmsDeactive(id) {
+        fmsUserAction(id, 0);
+    }
+
+    function fmsActive(id) {
+        fmsUserAction(id, 1);
+    }
+
+    function fmsDelete(id) {
+        fmsUserAction(id, -1)
+    }
+    $("#searchBox").keyup((event) => {
+        search_user(event);
+    })
+
+    function search_user(event) {
+        event.preventDefault();
+        input = $("#searchBox").val().toLowerCase();
+        let x = document.getElementsByClassName('card-body');
+        for (i = 0; i < x.length; i++) {
+            var title = x[i].children[0].children[0].innerHTML;
+            var email = x[i].children[0].children[1].innerHTML;
+            if (!title.toLowerCase().includes(input) && !email.toLowerCase().includes(input)) {
+                $(x[i].parentNode).addClass("d-none");
+            } else {
+                $(x[i].parentNode).removeClass("d-none");
+            }
+        }
+    }
+</script>
 {% endblock %}

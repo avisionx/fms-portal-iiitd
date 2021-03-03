@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from authentication.decorators import fms_required
+from authentication.forms import FMSUserForm
+from authentication.models import FMS
 from dashboard.forms import NotificationForm
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -91,9 +93,25 @@ def complaints(request):
 @fms_required
 def fms_users(request):
 
+    fmsUserForm = FMSUserForm(request.POST or None)
+
+    qs = FMS.objects.all().order_by('-user__date_joined')
+
     context = {
-        "fms_users_link": "active"
+        "fms_users_link": "active",
+        'fmsUsers': qs,
+        'fmsUserForm': fmsUserForm
     }
+
+    if fmsUserForm.is_valid():
+        error = fmsUserForm.save()
+        if error:
+            messages.error(
+                request, "User already exists!")
+        else:
+            messages.success(
+                request, "New FMS User has been registerd!")
+        return redirect('admin_fms_users')
 
     return render(request, 'admin/fms_users.html', context)
 
@@ -165,4 +183,20 @@ def notification_action(request):
     else:
         notification.active = False
         notification.save()
+    return JsonResponse({"status": 200}, safe=False)
+
+
+@fms_required
+def fms_user_action(request):
+    pk = request.POST['id']
+    status = int(request.POST['status'])
+    fmsUser = FMS.objects.get(pk=pk)
+    if status == -1:
+        fmsUser.user.delete()
+    elif status == 1:
+        fmsUser.user.is_active = True
+        fmsUser.user.save()
+    else:
+        fmsUser.user.is_active = False
+        fmsUser.user.save()
     return JsonResponse({"status": 200}, safe=False)
