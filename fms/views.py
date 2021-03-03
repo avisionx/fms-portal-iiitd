@@ -1,4 +1,5 @@
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 
@@ -6,6 +7,7 @@ def HomeView(request):
     return render(request, "index.html")
 
 
+@login_required
 def LoginRedirectView(request):
     if request.user.is_superuser:
         request.user.is_fms = True

@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from authentication.decorators import fms_required
+from django.db.models import Q
+from django.forms.widgets import TextInput
 from django.shortcuts import render
-from django_filters import (CharFilter, FilterSet, NumberFilter,
-                            OrderingFilter, TimeRangeFilter)
+from django_filters import (CharFilter, ChoiceFilter, DateTimeFilter,
+                            FilterSet, OrderingFilter)
 
 from ..models import Complaint
 
@@ -18,39 +22,45 @@ def dashboard(request):
 
 class ComplaintFilter(FilterSet):
 
-    o = OrderingFilter(
-        choices=(
-            ('rating', 'Rating Asc'),
-            ('-rating', 'Rating Desc'),
-            ('created_at', 'Created Oldest First'),
-            ('-created_at', 'Created Latest First'),
-            ('updated_at', 'Updated Oldest First'),
-            ('-updated_at', 'Updated Lastest First'),
-        )
+    search = CharFilter(method='custom_search_filter', label='Search', widget=TextInput(
+        attrs={'placeholder': 'Search by Complaint ID, Username, Email, Contact'}))
+
+    category = ChoiceFilter(
+        field_name='category', empty_label='All', choices=Complaint.COMPLAINT_CATEGORIES, label='Complaint Category')
+
+    location = ChoiceFilter(field_name='location',
+                            empty_label='All', choices=Complaint.LOCATION_CHOICES, label='Complaint Location')
+
+    created_at = DateTimeFilter(
+        field_name='created_at',
+        label='Created On/After',
+        lookup_expr='gte',
+        widget=TextInput(attrs={
+                         'type': 'date', 'placeholder': 'DD-MM-YYYY', 'max': datetime.now().date()})
     )
 
-    customer__user__username = CharFilter(lookup_expr='contains')
-    customer__contact = NumberFilter(lookup_expr='contains')
-    complaint_id = NumberFilter(
-        field_name='complaint_id', lookup_expr='contains')
+    active = ChoiceFilter(field_name='active', label='Status',
+                          empty_label='All', choices=((True, 'Active'), (False, 'Closed')))
 
-    class Meta:
-        model = Complaint
-        fields = {
-            'category': ['exact'],
-            'location': ['exact'],
-            'rating': ['gte'],
-            'created_at': ['gte'],
-            'updated_at': ['gte'],
-            'active': ['exact']
-        }
+    createdSort = OrderingFilter(
+        choices=(
+            ('created_at', 'Old to New'),
+        ), label='Sort By Created', empty_label='New to Old'
+    )
+
+    def custom_search_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(customer__user__username__contains=value) | Q(
+                customer__contact__contains=value) | Q(complaint_id__contains=value) | Q(customer__user__first_name__contains=value) | Q(customer__user__last_name__contains=value)
+        )
 
 
-@fms_required
+@ fms_required
 def complaints(request):
 
     f = ComplaintFilter(
-        request.GET, queryset=Complaint.objects.all().order_by('-created_at'))
+        request.GET, queryset=Complaint.objects.all().order_by('-created_at')
+    )
 
     context = {
         "complaints_link": "active",
@@ -60,7 +70,7 @@ def complaints(request):
     return render(request, 'admin/complaints.html', context)
 
 
-@fms_required
+@ fms_required
 def feedbacks(request):
 
     context = {
@@ -70,7 +80,7 @@ def feedbacks(request):
     return render(request, 'admin/feedbacks.html', context)
 
 
-@fms_required
+@ fms_required
 def fms_users(request):
 
     context = {
@@ -80,7 +90,7 @@ def fms_users(request):
     return render(request, 'admin/fms_users.html', context)
 
 
-@fms_required
+@ fms_required
 def notifications(request):
 
     context = {
@@ -90,7 +100,7 @@ def notifications(request):
     return render(request, 'admin/notifications.html', context)
 
 
-@fms_required
+@ fms_required
 def edit_profile(request):
     msg = {
         "save": False

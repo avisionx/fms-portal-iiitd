@@ -5,29 +5,61 @@
 
 {% block page_content %}
 <div class="container-fluid pt-1 pt-lg-3">
-    <h2 class="text-info mb-0 font-weight-bold py-2">Complaints</h2>
-    <form method="get">
-        {{ filter.form | crispy }}
-        <input type="submit" />
+    <h2 class="text-info mb-0 font-weight-bold pt-2">Complaints</h2>
+    <form method="GET" name="submit">
+        <div class="row">
+            <div class="form-group col mt-2">
+                {{ filter.form.search | as_crispy_field }}
+            </div>
+            <div class="form-group col-md-1 mt-2">
+                {{ filter.form.active | as_crispy_field }}
+            </div>
+            <div class="form-group d-none col-auto d-md-flex align-items-end">
+                <input type="submit" value="Search" class="btn btn-primary btn-success w-100">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-6 col-md-3 mt-2">
+                {{ filter.form.category | as_crispy_field }}
+            </div>
+            <div class="form-group col-6 col-md-3 mt-2">
+                {{ filter.form.location | as_crispy_field }}
+            </div>
+            <div class="form-group col-6 col-md-3 mt-2">
+                {{ filter.form.created_at | as_crispy_field }}
+            </div>
+            <div class="form-group col-6 col-md-3 mt-2">
+                {{ filter.form.createdSort | as_crispy_field }}
+            </div>
+        </div>
+        <div class="d-block d-md-none mt-2">
+            <input type="submit" value="Search" class="btn btn-primary btn-success w-100 py-2">
+        </div>
     </form>
-    <div class="row mt-2">
+    <div class="row mt-4">
         {% for complaint in filter.qs %}
-        <div class="col-12 col-lg-4 complaintContainer">
-            <div class="my-2">
-                <div class="card-body shadow-sm bg-white rounded-lg p-4">
+        <div class="col-12 col-lg-4 mb-4 complaintContainer">
+            <div class="h-100">
+                <div class="card-body shadow-sm bg-white rounded-lg p-4 h-100 d-flex flex-column">
                     <h5 class="mb-1 font-weight-bold text-truncate">#{{complaint.complaint_id}}
                         {{complaint.get_location_display }} -
                         {{complaint.get_category_display }}
                     </h5>
-                    <div>
-
-                        {{complaint.customer.user.first_name}}
-                        {{complaint.customer.user.last_name}}<br />
-                        {{complaint.customer.user.username}}<br />
-                        {{complaint.customer.contact}}
+                    <div class="mb-0 small row">
+                        <div class="col">
+                            <i class="fas fa-user"></i> {{complaint.customer.user.first_name}}
+                            {{complaint.customer.user.last_name}}
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-phone-alt"></i> {{complaint.customer.contact}}
+                        </div>
+                        <div class="col-12">
+                            <i class="fas fa-envelope"></i> {{complaint.customer.user.username}}
+                        </div>
                     </div>
                     <div class="mb-0 smaller row">
                         <div class="col">
+                            Status:
                             {% if complaint.active %}
                             <span class="badge bg-warning">Active</span>
                             {% else %}
@@ -36,8 +68,8 @@
                         </div>
                         <div class="ml-auto col-auto text-right">{{complaint.created_at}}</div>
                     </div>
-                    <p class="small my-2">{{ complaint.description | truncatechars:80}}</p>
-                    <a href="#{{complaint.complaint_id}}" class="w-100 mt-2 btn btn-sm btn-outline-success"
+                    <p class="small mt-1 mb-3">{{ complaint.description | truncatechars:80}}</p>
+                    <a href="#{{complaint.complaint_id}}" class="w-100 mt-auto btn btn-sm btn-outline-success"
                         onclick="showComplaintInfo('{{complaint.complaint_id}}')">Complaint Details <i
                             class="fas fa-arrow-right ml-1 small"></i></a>
                 </div>

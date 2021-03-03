@@ -317,3 +317,7 @@ input:-webkit-autofill {
 .bg-translucent {
     background: rgba(0, 0, 0, .5);
 }
+
+.form-group>label {
+    margin: 0;
+}
