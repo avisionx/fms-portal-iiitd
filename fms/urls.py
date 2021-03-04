@@ -6,7 +6,7 @@ from django.urls import include, path
 from .views import HomeView, LoginRedirectView, LogoutView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    #     path('admin/', admin.site.urls),
     path('', HomeView, name='index'),
     path('login_redirects/', LoginRedirectView, name='login-redirects'),
     path('', include('dashboard.urls')),

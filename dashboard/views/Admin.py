@@ -6,7 +6,7 @@ from authentication.models import FMS
 from dashboard.forms import NotificationForm
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.forms.widgets import TextInput
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -57,21 +57,41 @@ class ComplaintFilter(FilterSet):
 @fms_required
 def dashboard(request):
 
+    countActive = Complaint.objects.filter(
+        active=True).count()
+    countTotal = Complaint.objects.count()
+    activePercent = (countActive * 100) // countTotal
+
+    topComplaints = Complaint.objects.all().order_by('-created_at')[:3]
+
+    yearCount = Complaint.objects.filter(
+        created_at__year=datetime.now().year).values_list('created_at__month').annotate(total=Count('pk'))
+
+    yearCounts = [0] * 12
+    for (month, count) in yearCount:
+        yearCounts[month - 1] = count
+
     context = {
-        "dashboard_link": "active"
+        "dashboard_link": "active",
+        "last_complaint": Complaint.objects.latest('created_at').complaint_id,
+        "activePercent": activePercent,
+        "countActive": countActive,
+        "countTotal": countTotal,
+        'complaints': topComplaints,
+        'yearCounts': list(yearCounts)
     }
 
     return render(request, 'admin/dashboard.html', context)
 
 
-@fms_required
+@ fms_required
 def complaints(request):
 
     filtered_complaints = ComplaintFilter(
         request.GET, queryset=Complaint.objects.all().order_by('-created_at')
     )
 
-    paginator = Paginator(filtered_complaints.qs, 20)
+    paginator = Paginator(filtered_complaints.qs, 18)
     page = request.GET.get('page', 1)
 
     try:
@@ -90,7 +110,7 @@ def complaints(request):
     return render(request, 'admin/complaints.html', context)
 
 
-@fms_required
+@ fms_required
 def fms_users(request):
 
     fmsUserForm = FMSUserForm(request.POST or None)
@@ -116,7 +136,7 @@ def fms_users(request):
     return render(request, 'admin/fms_users.html', context)
 
 
-@fms_required
+@ fms_required
 def notifications(request):
 
     notificationForm = NotificationForm(request.POST or None)
@@ -138,7 +158,7 @@ def notifications(request):
     return render(request, 'admin/notifications.html', context)
 
 
-@fms_required
+@ fms_required
 def edit_profile(request):
     msg = {
         "save": False
@@ -160,7 +180,7 @@ def edit_profile(request):
     return render(request, "admin/edit_profile.html", {'msg': msg, 'formData': formData})
 
 
-@fms_required
+@ fms_required
 def complaint_action(request):
     complaintId = request.POST['id']
     status = request.POST['status']
@@ -173,7 +193,7 @@ def complaint_action(request):
     return JsonResponse({"status": 200}, safe=False)
 
 
-@fms_required
+@ fms_required
 def notification_action(request):
     pk = request.POST['id']
     status = request.POST['status']
@@ -186,7 +206,7 @@ def notification_action(request):
     return JsonResponse({"status": 200}, safe=False)
 
 
-@fms_required
+@ fms_required
 def fms_user_action(request):
     pk = request.POST['id']
     status = int(request.POST['status'])
@@ -200,3 +220,15 @@ def fms_user_action(request):
         fmsUser.user.is_active = False
         fmsUser.user.save()
     return JsonResponse({"status": 200}, safe=False)
+
+
+@ fms_required
+def last_complaint(request, slug):
+    if request.is_ajax():
+        complaint_id = Complaint.objects.latest('created_at').complaint_id
+        if str(complaint_id) == str(slug):
+            return JsonResponse(slug, safe=False)
+        else:
+            return JsonResponse(complaint_id, safe=False)
+    else:
+        return redirect("admin_dashboard")

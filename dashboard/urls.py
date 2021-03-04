@@ -22,5 +22,7 @@ urlpatterns = [
     path('notification-action/', Admin.notification_action,
          name='notification_action'),
     path('fms-user-action/', Admin.fms_user_action,
-         name='fms_user_action')
+         name='fms_user_action'),
+    re_path(r'^last-complaint/(?P<slug>[\w-]+)/$', Admin.last_complaint),
+
 ]

@@ -40,7 +40,7 @@ def complaint_api(request, slug):
         complaint = json.loads(serialize([complaint]))[0]
         return JsonResponse({"status": 200, "data": {**extractComplaintObj(complaint), **customer_info}}, safe=False)
     else:
-        return redirect("/courses")
+        return redirect("login-redirects")
 
 
 def get_days(ttime):

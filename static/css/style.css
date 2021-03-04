@@ -351,3 +351,53 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 15%) !important;
     box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 15%) !important;
 }
+
+.circular-chart {
+    max-height: 210px;
+}
+
+.statCircle {
+    fill: none;
+    stroke-width: 0.8;
+    stroke-linecap: round;
+    animation: progressAnimatiom 0.5s ease-out;
+}
+
+@keyframes progressAnimatiom {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+
+.circular-chart.white .statCircle {
+    stroke: white;
+}
+
+.statPercentage {
+    transform: translateX(1px);
+    fill: white;
+    font-weight: 300;
+    font-size: 0.5rem;
+    text-anchor: end;
+}
+
+.statPercentageTotal {
+    transform: translateX(1px);
+    fill: white;
+    font-weight: 300;
+    font-size: 0.2rem;
+    text-anchor: start;
+}
+
+@media (min-width: 992px) {
+    .circular-chart {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.hideStat {
+    display: none !important;
+}
