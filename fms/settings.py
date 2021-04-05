@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'm+ud2(9el(&2yk#@q^b49!$%ew_i4mhi4$7p^+b1#$)kg)$2=='
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -84,6 +84,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fms.wsgi.application'
 
+AUTHENTICATION_OSA_URL = os.getenv('AUTHENTICATION_OSA_URL')
+AUTHENTICATION_BACKENDS = [
+    'authentication.backends.OSAAuthBackend',
+    'authentication.backends.FMSAdminBackend'
+]
+
+ADMIN_LOGIN = os.getenv('ADMIN_LOGIN')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+PASSWORD_RESET_URL = os.getenv('PASSWORD_RESET_URL')
+SIGNUP_URL = os.getenv('SIGNUP_URL')
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
