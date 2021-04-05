@@ -39,8 +39,6 @@
                     aria-labelledby="profileDropdown">
                     <a class="dropdown-item small pl-3" href="{% url 'admin_edit_profile' %}"><i
                             class="fas fa-user-edit pr-2"></i> Edit Profile</a>
-                    <a class="dropdown-item small pl-3" href="{% url 'password_reset' %}"><i
-                            class="fas fa-key pr-2"></i> Reset Password</a>
                     <a class="dropdown-item small pl-3" href="{% url 'logout' %}"><i
                             class="fas fa-sign-out-alt pr-2"></i> Logout</a>
                 </div>
@@ -56,12 +54,20 @@
                 <li class="{{ complaints_link }} sideTab">
                     <a href="{% url 'admin_complaints' %}"><i class="fas fa-clipboard-list"></i>Complaints</a>
                 </li>
-                <li class="{{ fms_users_link }} sideTab">
-                    <a href="{% url 'admin_fms_users' %}"><i class="fas fa-users"></i>FMS Users</a>
+                <li class="{{ reminders_link }} sideTab">
+                    <a href="{% url 'admin_reminders' %}"><i class="fas fa-calendar"></i>Reminders</a>
                 </li>
                 <li class="{{ notifications_link }} sideTab">
                     <a href="{% url 'admin_notifications' %}"><i class="fas fa-bell"></i>Notifications</a>
                 </li>
+                <li class="{{ fms_users_link }} sideTab">
+                    <a href="{% url 'admin_fms_users' %}"><i class="fas fa-users"></i>FMS Users</a>
+                </li>
+                {% if user.is_superuser %}
+                <li class="{{ settings_link }} sideTab">
+                    <a href="{% url 'admin_settings' %}"><i class="fas fa-cog"></i>Settings</a>
+                </li>
+                {% endif %}
             </ul>
         </nav>
         <div class="content rounded pb-4" style="background: #F2F3F7">

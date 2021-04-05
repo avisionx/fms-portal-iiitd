@@ -18,7 +18,6 @@ def SignUpView(request):
 
 @login_required
 def LoginRedirectView(request):
-    print(request)
     if request.user.is_superuser:
         request.user.is_fms = True
         request.user.is_customer = False

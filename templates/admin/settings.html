@@ -1,0 +1,148 @@
+{% extends "admin/base_dashboard.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block page_content %}
+<div class="container-fluid pt-1 pt-lg-3">
+    <h2 class="text-info mb-0 font-weight-bold pt-2">
+        Settings
+    </h2>
+    <p class="mb-0 text-danger">Note: Changing these values requires a system restart!</p>
+    <h3 class="text-info mb-0 font-weight-bold py-2 d-flex v-center">
+        Complaint Categories
+        <span class="ml-auto">
+            <Button class="btn btn-primary btn-sm py-2 px-3 btn-success" data-toggle="collapse"
+                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Create <i
+                    class="fas fa-plus ml-1 small"></i></Button>
+        </span>
+    </h3>
+    <div class="collapse" id="collapseExample">
+        <div class="card p-4 mb-3 mt-1">
+
+            {% crispy complaintCategoriesForm %}
+
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        {% for complaint_category in complaint_categories %}
+        <div class="col-12 col-md-4 col-lg-3 mb-3">
+            <div class="card-body hover-shadow bg-white rounded-lg">
+                <div class="row">
+                    <div class="col">
+                        <p class="mb-0">{{complaint_category.id}}. {{complaint_category.name}}</p>
+                    </div>
+                    <div class="col-auto">
+                        {% if complaint_category.active %}
+                        <Button class="btn btn-sm smaller btn-warning"
+                            onclick="complaintCategoryInactive('{{complaint_category.id}}')">Inactive
+                            <i class="fas fa-power-off small"></i></Button>
+                        {% else %}
+                        <Button class="btn btn-sm smaller btn-success"
+                            onclick="complaintCategoryActive('{{complaint_category.id}}')">Active
+                            <i class="fas fa-times"></i></Button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col smaller d-flex v-center">
+                    Status:
+                    {% if complaint_category.active %}
+                    <span class="badge bg-success ml-1">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary ml-1">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <h3 class="text-info mb-0 font-weight-bold py-2 d-flex v-center">
+        Location Choices
+        <span class="ml-auto">
+            <Button class="btn btn-primary btn-sm py-2 px-3 btn-success" data-toggle="collapse"
+                data-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">Create <i
+                    class="fas fa-plus ml-1 small"></i></Button>
+        </span>
+    </h3>
+    <div class="collapse" id="collapseExample1">
+        <div class="card p-4 mb-3 mt-1">
+
+            {% crispy locationChoicesForm %}
+
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        {% for location_choice in location_choices %}
+        <div class="col-12 col-md-4 col-lg-3 mb-3">
+            <div class="card-body hover-shadow bg-white rounded-lg">
+                <div class="row">
+                    <div class="col">
+                        <p class="mb-0">{{location_choice.id}}. {{location_choice.name}}</p>
+                    </div>
+                    <div class="col-auto">
+                        {% if location_choice.active %}
+                        <Button class="btn btn-sm smaller btn-warning"
+                            onclick="locationChoiceInactive('{{location_choice.id}}')">Inactive
+                            <i class="fas fa-power-off small"></i></Button>
+                        {% else %}
+                        <Button class="btn btn-sm smaller btn-success"
+                            onclick="locationChoiceActive('{{location_choice.id}}')">Active
+                            <i class="fas fa-times"></i></Button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col smaller d-flex v-center">
+                    Status:
+                    {% if location_choice.active %}
+                    <span class="badge bg-success ml-1">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary ml-1">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block page_script %}
+<script>
+    function complaintCategoryAction(id, status) {
+        sendData("{% url 'complaint_category_action' %}", {
+            id: id,
+            status: status
+        }, () => {
+            location.reload()
+        })
+    }
+
+    function complaintCategoryInactive(id) {
+        complaintCategoryAction(id, 0);
+    }
+
+    function complaintCategoryActive(id) {
+        complaintCategoryAction(id, 1)
+    }
+
+    function locationChoiceAction(id, status) {
+        sendData("{% url 'location_choice_action' %}", {
+            id: id,
+            status: status
+        }, () => {
+            location.reload()
+        })
+    }
+
+    function locationChoiceInactive(id) {
+        locationChoiceAction(id, 0);
+    }
+
+    function locationChoiceActive(id) {
+        locationChoiceAction(id, 1)
+    }
+</script>
+{% endblock %}

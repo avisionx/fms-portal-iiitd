@@ -3,8 +3,11 @@ from datetime import datetime
 from authentication.decorators import fms_required
 from authentication.forms import FMSUserForm
 from authentication.models import FMS
-from dashboard.forms import NotificationForm
+from dashboard.forms import (ComplaintCategoriesForm, LocationChoicesForm,
+                             NotificationForm)
+from dashboard.models import ComplaintCategories, LocationChoices
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Count, Q
 from django.forms.widgets import TextInput
@@ -37,6 +40,36 @@ class ComplaintFilter(FilterSet):
         widget=TextInput(attrs={
                          'type': 'date', 'placeholder': 'DD-MM-YYYY', 'max': datetime.now().date()})
     )
+
+    active = ChoiceFilter(field_name='active', label='Status',
+                          empty_label='All', choices=((True, 'Active'), (False, 'Closed')))
+
+    createdSort = OrderingFilter(
+        choices=(
+            ('created_at', 'Old to New'),
+        ), label='Sort By Created', empty_label='New to Old'
+    )
+
+    def custom_search_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(customer__user__username__contains=value) | Q(
+                customer__contact__contains=value) | Q(complaint_id__contains=value) | Q(customer__user__first_name__contains=value) | Q(customer__user__last_name__contains=value)
+        )
+
+
+class RemindersFilter(FilterSet):
+
+    search = CharFilter(method='custom_search_filter', label='Search', widget=TextInput(
+        attrs={'placeholder': 'Search by Complaint ID, Username, Email, Contact'}))
+
+    category = ChoiceFilter(
+        field_name='category', empty_label='All', choices=Complaint.COMPLAINT_CATEGORIES, label='Complaint Category')
+
+    location = ChoiceFilter(field_name='location',
+                            empty_label='All', choices=Complaint.LOCATION_CHOICES, label='Complaint Location')
+
+    rating = ChoiceFilter(field_name='rating',
+                          empty_label='Any', choices=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), ), label='Rating')
 
     active = ChoiceFilter(field_name='active', label='Status',
                           empty_label='All', choices=((True, 'Active'), (False, 'Closed')))
@@ -111,11 +144,39 @@ def complaints(request):
 
 
 @ fms_required
+def reminders(request):
+
+    filtered_complaints = RemindersFilter(
+        request.GET, queryset=Complaint.objects.filter(
+            active=True, reminder__lte=datetime.today()).order_by('-reminder')
+    )
+
+    paginator = Paginator(filtered_complaints.qs, 18)
+    page = request.GET.get('page', 1)
+
+    try:
+        res = paginator.page(page)
+    except PageNotAnInteger:
+        res = paginator.page(1)
+    except EmptyPage:
+        res = paginator.page(paginator.num_pages)
+
+    context = {
+        "reminders_link": "active",
+        'filter': filtered_complaints,
+        'complaints': res
+    }
+
+    return render(request, 'admin/reminders.html', context)
+
+
+@ fms_required
 def fms_users(request):
 
     fmsUserForm = FMSUserForm(request.POST or None)
 
-    qs = FMS.objects.all().order_by('-user__date_joined')
+    qs = FMS.objects.filter(user__is_superuser=False).order_by(
+        '-user__date_joined')
 
     context = {
         "fms_users_link": "active",
@@ -158,6 +219,39 @@ def notifications(request):
     return render(request, 'admin/notifications.html', context)
 
 
+@fms_required
+@user_passes_test(lambda u: u.is_superuser)
+def settings(request):
+
+    complaintCategoriesForm = ComplaintCategoriesForm(request.POST or None)
+    ComplaintCategories_QS = ComplaintCategories.objects.all().order_by('-active', 'name')
+
+    locationChoicesForm = LocationChoicesForm(request.POST or None)
+    LocationChoices_QS = LocationChoices.objects.all().order_by('-active', 'name')
+
+    context = {
+        "settings_link": "active",
+        'complaint_categories': ComplaintCategories_QS,
+        'complaintCategoriesForm': complaintCategoriesForm,
+        'location_choices': LocationChoices_QS,
+        'locationChoicesForm': locationChoicesForm
+    }
+
+    if complaintCategoriesForm.is_valid():
+        complaintCategoriesForm.save()
+        messages.success(
+            request, "New complaint category has been created!")
+        return redirect('admin_settings')
+
+    if locationChoicesForm.is_valid():
+        locationChoicesForm.save()
+        messages.success(
+            request, "New location choice has been created!")
+        return redirect('admin_settings')
+
+    return render(request, 'admin/settings.html', context)
+
+
 @ fms_required
 def edit_profile(request):
     msg = {
@@ -167,10 +261,21 @@ def edit_profile(request):
     if request.method == "POST":
         first_name = request.POST["first_name"]
         last_name = request.POST["last_name"]
-        request.user.first_name = first_name
-        request.user.last_name = last_name
-        request.user.save()
-        msg["save"] = True
+        password = request.POST["password"]
+        password1 = request.POST["password1"]
+        if(password and (password == password1)):
+            request.user.set_password(password)
+            request.user.first_name = first_name
+            request.user.last_name = last_name
+            request.user.save()
+            msg["save"] = True
+        elif(password):
+            msg["err"] = True
+        else:
+            request.user.first_name = first_name
+            request.user.last_name = last_name
+            request.user.save()
+            msg["save"] = True
 
     formData = {
         'first_name': request.user.first_name,
@@ -194,6 +299,16 @@ def complaint_action(request):
 
 
 @ fms_required
+def set_complaint_reminder(request):
+    complaintId = request.POST['id']
+    date = request.POST['date']
+    complaint = Complaint.objects.get(complaint_id=complaintId)
+    complaint.reminder = datetime(int(date[:4]), int(date[5:7]), int(date[8:]))
+    complaint.save()
+    return JsonResponse({"status": 200}, safe=False)
+
+
+@ fms_required
 def notification_action(request):
     pk = request.POST['id']
     status = request.POST['status']
@@ -207,18 +322,45 @@ def notification_action(request):
 
 
 @ fms_required
+def complaint_category_action(request):
+    id = request.POST['id']
+    status = request.POST['status']
+    complaintcat = ComplaintCategories.objects.get(id=id)
+    if int(status) == 1:
+        complaintcat.active = True
+    else:
+        complaintcat.active = False
+    complaintcat.save()
+    return JsonResponse({"status": 200}, safe=False)
+
+
+@ fms_required
+def location_choice_action(request):
+    id = request.POST['id']
+    status = request.POST['status']
+    locationchoc = LocationChoices.objects.get(id=id)
+    if int(status) == 1:
+        locationchoc.active = True
+    else:
+        locationchoc.active = False
+    locationchoc.save()
+    return JsonResponse({"status": 200}, safe=False)
+
+
+@ fms_required
 def fms_user_action(request):
     pk = request.POST['id']
     status = int(request.POST['status'])
     fmsUser = FMS.objects.get(pk=pk)
-    if status == -1:
-        fmsUser.user.delete()
-    elif status == 1:
+    activeCount = FMS.objects.filter(user__is_active=True).count()
+    if activeCount > 1:
+        if status == -1:
+            fmsUser.user.delete()
+        elif status != 1:
+            fmsUser.user.is_active = False
+    if status == 1:
         fmsUser.user.is_active = True
-        fmsUser.user.save()
-    else:
-        fmsUser.user.is_active = False
-        fmsUser.user.save()
+    fmsUser.user.save()
     return JsonResponse({"status": 200}, safe=False)
 
 

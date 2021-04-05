@@ -2,6 +2,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (ButtonHolder, Div, Fieldset, Layout, Row,
                                  Submit)
 from django import forms
+from django.conf import settings
 
 from authentication.models import User
 
@@ -58,7 +59,7 @@ class FMSUserForm(forms.Form):
     def save(self):
         data = self.cleaned_data
         username = data["email"]
-        password = 'fms_admin_password'
+        password = settings.ADMIN_PASSWORD
         first_name = data["first_name"]
         last_name = data["last_name"]
 

@@ -2,6 +2,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import ButtonHolder, Fieldset, Layout, Submit
 from django import forms
 
+from dashboard.models import ComplaintCategories, LocationChoices
+
 from .models import Complaint, Notification
 
 
@@ -108,3 +110,87 @@ class NotificationForm(forms.Form):
             active=data['active'],
         )
         newNotificaion.save()
+
+
+class ComplaintCategoriesForm(forms.Form):
+
+    active = forms.BooleanField(
+        label="Category Active",
+        initial=True,
+        required=False
+    )
+
+    name = forms.CharField(
+        label="Category Name",
+        widget=forms.TextInput(
+            attrs={'placeholder': "Category Name...",  'class': "mb-2", 'maxlength': '50'}),
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_class = 'form-vertical'
+        self.helper.label_class = 'mb-0'
+        self.helper.field_class = 'mb-0'
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'active'
+            ),
+            ButtonHolder(
+                Submit('submit', 'Create Complaint Category',
+                       css_class="btn-success px-4 py-2")
+            )
+        )
+
+    def save(self):
+        data = self.cleaned_data
+        newComplaintCategory = ComplaintCategories(
+            name=data['name'],
+            active=data['active'],
+        )
+        newComplaintCategory.save()
+
+
+class LocationChoicesForm(forms.Form):
+
+    active1 = forms.BooleanField(
+        label="Location Active",
+        initial=True,
+        required=False
+    )
+
+    name1 = forms.CharField(
+        label="Location Name",
+        widget=forms.TextInput(
+            attrs={'placeholder': "Location Name...",  'class': "mb-2", 'maxlength': '50'}),
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_class = 'form-vertical'
+        self.helper.label_class = 'mb-0'
+        self.helper.field_class = 'mb-0'
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name1',
+                'active1'
+            ),
+            ButtonHolder(
+                Submit('submit', 'Create Location Choice',
+                       css_class="btn-success px-4 py-2")
+            )
+        )
+
+    def save(self):
+        data = self.cleaned_data
+        newLocationChoice = LocationChoices(
+            name=data['name1'],
+            active=data['active1'],
+        )
+        newLocationChoice.save()

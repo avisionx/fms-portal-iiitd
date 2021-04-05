@@ -4,20 +4,41 @@ from django.db import models
 from django.urls import reverse
 
 
+class ComplaintCategories(models.Model):
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.id) + ": " + str(self.name)
+
+
+def GetComplaintCategoryList():
+    return list(ComplaintCategories.objects.filter(
+        active=True).values_list('id', 'name'))
+
+
+class LocationChoices(models.Model):
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.id) + ": " + str(self.name)
+
+
+def GetLocationChoicesList():
+    return list(LocationChoices.objects.filter(
+        active=True).values_list('id', 'name'))
+
+
 class Complaint(models.Model):
 
-    COMPLAINT_CATEGORIES = [
-        (1, 'Others'),
-        (2, 'Electricity'),
-        (3, 'House Keeping'),
-    ]
+    COMPLAINT_CATEGORIES = GetComplaintCategoryList()
 
-    LOCATION_CHOICES = [
-        (1, 'Others'),
-        (2, 'Hostel'),
-        (3, 'New Acad Block'),
-        (4, 'Library'),
-    ]
+    LOCATION_CHOICES = GetLocationChoicesList()
 
     complaint_id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -37,6 +58,7 @@ class Complaint(models.Model):
     location_desc = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    reminder = models.DateTimeField(null=True)
     active = models.BooleanField(default=True)
 
     def __str__(self):

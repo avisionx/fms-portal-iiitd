@@ -101,6 +101,11 @@ def submit_feedback(request):
 def extractComplaintObj(complaint):
     created_at = parse_datetime(
         complaint['fields']['created_at']).strftime("%I:%M %p, %d %b %Y")
+    if complaint['fields']['reminder']:
+        reminder = parse_datetime(
+            complaint['fields']['reminder']).strftime("%I:%M %p, %d %b %Y")
+    else:
+        reminder = None
     temp = {
         'id': complaint['pk'],
         'location': complaint_get_location(complaint['fields']['location']),
@@ -109,6 +114,8 @@ def extractComplaintObj(complaint):
         'created_at': created_at,
         'active': complaint['fields']['active'],
         'rating': complaint['fields']['rating'],
-        'feedback': complaint['fields']['feedback']
+        'feedback': complaint['fields']['feedback'],
+        'reminder':  reminder
+
     }
     return temp
