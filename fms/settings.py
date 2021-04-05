@@ -93,7 +93,9 @@ AUTHENTICATION_BACKENDS = [
 ADMIN_LOGIN = os.getenv('ADMIN_LOGIN')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 PASSWORD_RESET_URL = os.getenv('PASSWORD_RESET_URL')
+OSA_APP_URL = os.getenv('OSA_APP_URL')
 SIGNUP_URL = os.getenv('SIGNUP_URL')
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

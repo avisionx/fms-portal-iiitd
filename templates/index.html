@@ -1,7 +1,133 @@
 {% extends "base_generic.html" %}
-
+{% load static %}
 {% block content %}
-Landing Page
-<a href="{% url 'login' %}">Login</a>
-<a href="{% url 'customer_signup' %}">Sign Up</a>
+<div class="container-fluid">
+  <div class="d-flex align-items-center mb-0 mt-2">
+    <img src="{% static 'images/logo.svg' %}" height="70px" alt="">
+    <img src="{% static 'images/iiitd-logo.png' %}" class="ml-auto" height="70px" alt="">
+  </div>
+  <div class="d-flex">
+    <p class="mx-auto mt-1 mx-lg-0 ml-lg-1 small text-secondary small">Complaints portal for Facility Management
+      Services at IIITD</p>
+  </div>
+</div>
+<nav class="navbar navbar-expand-md navbar-dark bg-iiitd">
+  <div class="d-flex d-md-none w-100 text-white py-1 px-3">
+    <div class="d-flex align-items-center w-100" aria-hidden="true" data-toggle="collapse"
+      data-target="#navbarSupportedContent">
+      Menu <span class="ml-1">
+        <svg viewBox="0 0 24 24" role="presentation" style="width: 1.05rem; height: 1.05rem;">
+          <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" style="fill: currentcolor;"></path>
+        </svg>
+      </span>
+    </div>
+  </div>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav">
+      <li class="ml-lg-2 my-1 px-3 my-md-0 nav-item"><a href="#" class=" px-md-2 nav-link text-white">Main OSA
+          App</a></li>
+      <li class="ml-lg-2 my-1 px-3 my-md-0 nav-item"><a href="{% url 'customer_dashboard' %}"
+          class=" px-md-2 nav-link text-white">Register
+          Complaint</a></li>
+      <li class="ml-lg-2 my-1 px-3 my-md-0 nav-item"><a href="{% url 'customer_track_complaint' %}"
+          class=" px-md-2 nav-link text-white">Track Complaints</a></li>
+      <li class="ml-lg-2 my-1 px-3 my-md-0 nav-item"><a href="{% url 'login' %}"
+          class=" px-md-2 nav-link text-white">Login</a>
+      </li>
+      <li class="ml-lg-2 my-1 px-3 my-md-0 nav-item"><a href="{% url 'customer_signup' %}"
+          class=" px-md-2 nav-link text-white">Sign Up</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="px-3 px-md-5 container-fluid">
+  <div class="row mt-4">
+    <div class="col-12 col-lg-7 order-2 order-lg-1 mt-3 mt-lg-0">
+      <h4 class="font-weight-bold text-iiitd mb-0">Overview</h4>
+      <div>
+        <p>The Indraprastha Institute of Information Technology established by Delhi Act,
+          2007 endowed
+          the establishment
+          and incorporation of a non-affiliating and teaching institute at Delhi to facilitate and promote studies,
+          research, incubation and extension work in Information Technology and its application domains, and also to
+          achieve excellence in these and connected fields.</p>
+        <p class="mb-0">With the above objectives in view, the Government of NCT of Delhi allocated 25 acres of land
+          to enable the
+          setting up of the IIIT-D permanent campus, which is located behind the Phase III Okhla Industrial Estate at a
+          distance if 1 ½ km (approx.) from the Okhla railway station, South Delhi. The Facility Management
+          Services(FMS) at IIITD works it's level best to keep the campus in proper condition and offers a 24X7 service
+          as well to receive all the complaints.</p>
+      </div>
+    </div>
+    <div class="col-12 col-lg-5 order-1 order-lg-2">
+      <img src="{% static 'images/landing-img.jpg' %}" class="w-100 rounded-lg " alt="">
+    </div>
+  </div>
+  <div class="col-12 mt-3 mb-3">
+    <h4 class="font-weight-bold text-iiitd mb-0">Our Team</h4>
+    <div class="table-container" style="width:100%; overflow-x:auto">
+      <table class="table">
+        <tbody>
+          <tr class="font-weight-bold">
+            <td>S.No.</td>
+            <td>Designation</td>
+            <td>Name</td>
+            <td>Extension</td>
+            <td>Mobile No.</td>
+            <td>Email</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Project cum Estate Officer</td>
+            <td>Sanjay Roy</td>
+            <td>563</td>
+            <td>-</td>
+            <td><a href="mailto:sanjay@iiitd.ac.in">sanjay@iiitd.ac.in</a></td>
+          </tr>
+          <tr>
+            <td colspan="100" style="text-align:center"><strong>Maintenance Team</strong></td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Facility Manager</td>
+            <td>Mayank Parashar&nbsp;</td>
+            <td>560</td>
+            <td>9711279230</td>
+            <td><a href="mailto:iiitd@avonfms.com">iiitd@avonfms.com</a></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Electrical Supervisor</td>
+            <td>Mukesh&nbsp;Pandey</td>
+            <td>567</td>
+            <td>8010171555</td>
+            <td><a href="mailto:inventory-facilities@iiitd.ac.in">inventory-facilities@iiitd.ac.in</a></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Electrical Supervisor (Night Shift)</td>
+            <td>Satish Yadav&nbsp;</td>
+            <td>567</td>
+            <td>9953646122</td>
+            <td><a href="mailto:inventory-facilities@iiitd.ac.in">inventory-facilities@iiitd.ac.in</a></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>HVAC Supervisor</td>
+            <td>Ganesh</td>
+            <td>420/566</td>
+            <td>9899949873</td>
+            <td><a href="mailto:admin-facilities@iiitd.ac.in">admin-facilities@iiitd.ac.in</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer class="text-center text-muted mb-2"> <small>Copyright © 2021 IIITD | Developed at <a
+      href="http://midas.iiitd.edu.in/" class="text-primary">MIDAS
+      Labs</a> by <a href="https://avisionx.net/" class="text-primary">Avi Garg</a> & <a
+      href="https://www.linkedin.com/in/divyam-agrawal/" class="text-primary">Divyam Agrawal</a>.</small> </footer>
 {% endblock %}

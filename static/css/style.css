@@ -31,6 +31,14 @@ html {
     background: linear-gradient(48deg, #47a06e, #3b7cb4);
 }
 
+.text-iiitd {
+    color: #3fada8;
+}
+
+.bg-iiitd {
+    background: #3fada8;
+}
+
 @-webkit-keyframes gradient {
     0% {
         background-position: 0% 74%
@@ -112,6 +120,7 @@ input:-webkit-autofill {
     border: none;
     transition: background-color 5000s ease-in-out 0s;
 }
+
 
 .no-decoration {
     text-decoration: none !important

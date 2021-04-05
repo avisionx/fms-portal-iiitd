@@ -5,8 +5,8 @@ from django.contrib.auth.urls import urlpatterns
 from django.shortcuts import redirect
 from django.urls import include, path
 
-from .views import (HomeView, LoginRedirectView, LogoutView, PasswordResetView,
-                    SignUpView)
+from .views import (HomeView, LoginRedirectView, LogoutView, MainOSAAPP,
+                    PasswordResetView, SignUpView)
 
 urlpatterns = [
     #     path('admin/', admin.site.urls),
@@ -26,6 +26,8 @@ urlpatterns = [
          SignUpView, name='customer_signup'),
     path('password_reset/',
          PasswordResetView, name="password_reset"),
+    path('main_osa_app/',
+         MainOSAAPP, name="main_osa_app"),
     path('accounts/logout',
          LogoutView, name='logout')
 ]

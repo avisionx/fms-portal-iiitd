@@ -12,6 +12,10 @@ def PasswordResetView(request):
     return redirect(settings.PASSWORD_RESET_URL)
 
 
+def MainOSAAPP(request):
+    return redirect(settings.OSA_APP_URL)
+
+
 def SignUpView(request):
     return redirect(settings.SIGNUP_URL)
 

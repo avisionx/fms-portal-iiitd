@@ -4,12 +4,16 @@
 {% block content %}
 <div class="bg-gradient v-center h-center px-3" style="min-height: 100vh;">
   <div class="container py-4">
-    <div class="row bg-white py-5 rounded-lg shadow" style="min-height: 80vh;">
-
+    <div class="row bg-white py-5 rounded-lg shadow" style="min-height: 80vh; position: relative;">
       <div class="col-12 col-lg-6 v-center h-center">
+        <div style="position: absolute; top: 12px; left: 15px;">
+          <a href="{% url 'index' %}" class="no-decoration">
+            <i class="fas fa-home text-primary" aria-hidden="true"></i> <span class="small text-primary">Go
+              Back
+              Home</span></a>
+        </div>
         <img src="{% static 'images/login-image.svg' %}" class="w-75" alt="Login">
       </div>
-
       <div class="col-12 col-lg-6 v-center h-center">
         <div style="width: 85%">
 
