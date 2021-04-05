@@ -17,6 +17,7 @@ urlpatterns = [
     re_path(r'^admin/complaints/$', Admin.complaints, name='admin_complaints'),
     path('admin/reminders/', Admin.reminders, name='admin_reminders'),
     path('admin/fms-users/', Admin.fms_users, name='admin_fms_users'),
+    path('admin/charts/', Admin.charts, name='admin_charts'),
     path('admin/notifications/', Admin.notifications, name='admin_notifications'),
     path('admin/complaint-reminder/', Admin.set_complaint_reminder,
          name='set_complaint_reminder'),

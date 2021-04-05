@@ -57,6 +57,35 @@ class ComplaintFilter(FilterSet):
         )
 
 
+class ChartFilter(FilterSet):
+
+    category = ChoiceFilter(
+        field_name='category', empty_label='All', choices=Complaint.COMPLAINT_CATEGORIES, label='Complaint Category')
+
+    location = ChoiceFilter(field_name='location',
+                            empty_label='All', choices=Complaint.LOCATION_CHOICES, label='Complaint Location')
+
+    rating = ChoiceFilter(field_name='rating',
+                          empty_label='Any', choices=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), ), label='Rating')
+
+    created_at = DateTimeFilter(
+        field_name='created_at',
+        label='Created On/After',
+        lookup_expr='gte',
+        widget=TextInput(attrs={
+                         'type': 'date', 'placeholder': 'DD-MM-YYYY', 'max': datetime.now().date()})
+    )
+
+    active = ChoiceFilter(field_name='active', label='Status',
+                          empty_label='All', choices=((True, 'Active'), (False, 'Closed')))
+
+    def custom_search_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(customer__user__username__contains=value) | Q(
+                customer__contact__contains=value) | Q(complaint_id__contains=value) | Q(customer__user__first_name__contains=value) | Q(customer__user__last_name__contains=value)
+        )
+
+
 class RemindersFilter(FilterSet):
 
     search = CharFilter(method='custom_search_filter', label='Search', widget=TextInput(
@@ -141,6 +170,29 @@ def complaints(request):
     }
 
     return render(request, 'admin/complaints.html', context)
+
+
+@ fms_required
+def charts(request):
+
+    filtered_complaints = ChartFilter(
+        request.GET, queryset=Complaint.objects.all()
+    )
+
+    yearCount = filtered_complaints.qs.values_list(
+        'created_at__month').annotate(total=Count('pk'))
+
+    yearCounts = [0] * 12
+    for (month, count) in yearCount:
+        yearCounts[month - 1] = count
+
+    context = {
+        "charts_link": "active",
+        'filter': filtered_complaints,
+        'yearCounts': yearCounts
+    }
+
+    return render(request, 'admin/charts.html', context)
 
 
 @ fms_required

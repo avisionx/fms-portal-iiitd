@@ -1,0 +1,164 @@
+{% extends "admin/base_dashboard.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load param_replace_tags %}
+
+{% block page_content %}
+<div class="container-fluid pt-1 pt-lg-3 d-flex h-100 flex-column">
+    <h2 class="text-info mb-0 font-weight-bold pt-2">Charts Analytics</h2>
+    <form method="GET" name="submit">
+        <div class="row">
+            <div class="form-group col-12 col-md-3 mt-2">
+                {{ filter.form.category | as_crispy_field }}
+            </div>
+            <div class="form-group col-12 col-md-3 mt-2">
+                {{ filter.form.location | as_crispy_field }}
+            </div>
+            <div class="form-group col-12 col-md-2 mt-2">
+                {{ filter.form.created_at | as_crispy_field }}
+            </div>
+            <div class="form-group col-6 col-md-2 mt-2">
+                {{ filter.form.active | as_crispy_field }}
+            </div>
+            <div class="form-group col-6 col-md-1 mt-2">
+                {{ filter.form.rating | as_crispy_field }}
+            </div>
+            <div class="form-group col-12 col-md-1 mt-2 d-flex align-items-end">
+                <input type="submit" value="Search" class="btn btn-primary btn-success w-100">
+            </div>
+        </div>
+    </form>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow border-0 chart-container px-2 pt-3 px-lg-3 pb-lg-1 pt-lg-4">
+                <div class="chartjs-size-monitor">
+                    <div class="chartjs-size-monitor-expand">
+                        <div class=""></div>
+                    </div>
+                    <div class="chartjs-size-monitor-shrink">
+                        <div class=""></div>
+                    </div>
+                </div>
+                <canvas id="complaintsChart" style="display: block; height: 300px; width: 480px;" width="650"
+                    height="250" class="chartjs-render-monitor"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block page_script %}
+
+<script>
+    var ctx = document.getElementById('complaintsChart').getContext('2d');
+    var gradientBottom = 300;
+    var complaintCounts = JSON.parse("{{yearCounts}}");
+
+    var gradientFill = ctx.createLinearGradient(0, gradientBottom, 0, 0);
+    gradientFill.addColorStop(0, "rgba(255, 255, 255, 0.5)");
+    gradientFill.addColorStop(1, "rgba(244, 144, 128, 0.3)");
+
+    var chartOptions = {
+        title: {
+            display: true,
+            text: 'Complaints Count vs Month'
+        },
+        legend: {
+            display: false,
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    max: Math.max(...complaintCounts) + 10,
+                    min: 0,
+                },
+                gridLines: {
+                    borderDash: [1, 4],
+                }
+            }],
+            xAxes: [{
+                gridLines: {
+                    display: false
+                }
+            }]
+        },
+        tooltips: {
+            enabled: true,
+            mode: 'index',
+            intersect: false,
+            backgroundColor: "white",
+            bodyFontColor: "#999999",
+            displayColors: false,
+            shadowOffsetX: 3,
+            shadowOffsetY: 3,
+            shadowBlur: 15,
+            shadowColor: "rgba(0, 0, 0, 0.3)",
+            callbacks: {
+                title: () => {},
+                label: function (tooltipItem, data) {
+                    return "Count: " + tooltipItem.yLabel;
+                },
+            },
+            xPadding: 15,
+            yPadding: 10,
+            caretSize: 0,
+            yAlign: 'top',
+            xAlign: 'center',
+            caretPadding: 10
+        },
+        layout: {
+            padding: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10
+            }
+        },
+        responsive: true,
+    }
+
+    var complaintData = {
+        labels: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ],
+        datasets: [{
+            label: 'Count',
+            data: complaintCounts,
+            backgroundColor: gradientFill,
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 2
+        }]
+    }
+
+    var complaintsChart = new Chart(ctx, {
+        type: 'bar',
+        data: complaintData,
+        options: chartOptions
+    });
+</script>
+{% endblock %}
