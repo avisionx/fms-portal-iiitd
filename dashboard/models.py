@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from authentication.models import Customer
 from django.core import serializers
 from django.db import models
@@ -34,6 +36,10 @@ def GetLocationChoicesList():
         active=True).values_list('id', 'name'))
 
 
+def user_directory_path(instance, filename):
+    return '{0}/uploads/{1}/{2}'.format(instance.customer.user.username, datetime.now().strftime("%Y/%m/%d"), filename)
+
+
 class Complaint(models.Model):
 
     COMPLAINT_CATEGORIES = GetComplaintCategoryList()
@@ -60,6 +66,7 @@ class Complaint(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     reminder = models.DateTimeField(null=True)
     active = models.BooleanField(default=True)
+    media = models.FileField(null=True, upload_to=user_directory_path)
 
     def __str__(self):
         return "Complaint No: " + str(self.complaint_id)

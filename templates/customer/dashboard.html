@@ -70,5 +70,14 @@
 {% endblock %}
 
 {% block page_script %}
+<script>
+    var uploadField = document.getElementById("complaint_media");
 
+    uploadField.onchange = function () {
+        if (this.files[0].size > 5242880) {
+            alert("File size too big! Upload file < 5Mb only.");
+            this.value = "";
+        };
+    };
+</script>
 {% endblock %}

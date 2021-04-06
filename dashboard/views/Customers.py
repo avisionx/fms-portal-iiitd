@@ -32,7 +32,7 @@ def dashboard(request):
     }
 
     if complaintForm.is_valid():
-        complaintForm.save(request.user)
+        complaintForm.save(request.user, request.FILES)
         messages.success(
             request, "Your complaint has been registerd!")
         return redirect('customer_dashboard')
@@ -115,7 +115,7 @@ def extractComplaintObj(complaint):
         'active': complaint['fields']['active'],
         'rating': complaint['fields']['rating'],
         'feedback': complaint['fields']['feedback'],
-        'reminder':  reminder
-
+        'reminder':  reminder,
+        'media': complaint['fields']['media']
     }
     return temp

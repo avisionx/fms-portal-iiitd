@@ -121,6 +121,18 @@ input:-webkit-autofill {
     transition: background-color 5000s ease-in-out 0s;
 }
 
+.form-control.custom-file {
+    display: flex;
+    align-items: center;
+}
+
+#complaint_media {
+    width: 100%;
+}
+
+.custom-file-label {
+    display: none;
+}
 
 .no-decoration {
     text-decoration: none !important

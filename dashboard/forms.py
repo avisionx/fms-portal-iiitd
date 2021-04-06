@@ -31,6 +31,9 @@ class ComplaintForm(forms.Form):
         required=True
     )
 
+    complaint_media = forms.FileField(
+        label="Complaint Image", required=False, widget=forms.FileInput(attrs={'accept': "image/*", 'id': 'complaint_media'}))
+
     description = forms.CharField(
         label="Complaint Description",
         widget=forms.Textarea(
@@ -50,7 +53,8 @@ class ComplaintForm(forms.Form):
                 'category',
                 'location',
                 'location_desc',
-                'description'
+                'description',
+                'complaint_media',
             ),
             ButtonHolder(
                 Submit('submit', 'Register Complaint',
@@ -58,14 +62,18 @@ class ComplaintForm(forms.Form):
             )
         )
 
-    def save(self, user):
+    def save(self, user, files):
         data = self.cleaned_data
+        media = None
+        if files:
+            media = files['complaint_media']
         newComplaint = Complaint(
             customer=user.customer,
             category=data['category'],
             description=data['description'],
             location=data['location'],
-            location_desc=data['location_desc']
+            location_desc=data['location_desc'],
+            media=media
         )
         newComplaint.save()
 
