@@ -1,3 +1,4 @@
+import csv
 from datetime import datetime
 
 from authentication.decorators import fms_required
@@ -11,10 +12,11 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Count, Q
 from django.forms.widgets import TextInput
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django_filters import (CharFilter, ChoiceFilter, DateTimeFilter,
                             FilterSet, OrderingFilter)
+from django_filters.filters import NumberFilter
 
 from ..models import Complaint, Notification
 
@@ -75,6 +77,10 @@ class ChartFilter(FilterSet):
         widget=TextInput(attrs={
                          'type': 'date', 'placeholder': 'DD-MM-YYYY', 'max': datetime.now().date()})
     )
+
+    year = NumberFilter(field_name='created_at',
+                        lookup_expr='year', label="Year", widget=TextInput(attrs={
+                            'placeholder': 'Year', 'type': 'number', 'max': datetime.now().date().year}))
 
     active = ChoiceFilter(field_name='active', label='Status',
                           empty_label='All', choices=((True, 'Active'), (False, 'Closed')))
@@ -192,6 +198,17 @@ def charts(request):
         'yearCounts': yearCounts
     }
 
+    if request.POST:
+        complaints = filtered_complaints.qs
+        keys = complaints[0].csv().keys()
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="fms-complaints-' + \
+            datetime.now().strftime("%Y-%m-%d-%H:%M")+'.csv"'
+        writer = csv.writer(response)
+        writer.writerow(keys)
+        for complaint in filtered_complaints.qs:
+            writer.writerow(complaint.csv().values())
+        return response
     return render(request, 'admin/charts.html', context)
 
 

@@ -64,6 +64,25 @@ class Complaint(models.Model):
     def __str__(self):
         return "Complaint No: " + str(self.complaint_id)
 
+    def csv(self):
+        return {
+            'Complaint ID': self.complaint_id,
+            'First Name': self.customer.user.first_name,
+            'Last Name': self.customer.user.last_name,
+            'Email': self.customer.user.username,
+            'Contact': self.customer.contact,
+            'Category': [x[1] for x in self.COMPLAINT_CATEGORIES if x[0] == self.category][0],
+            'Location': [x[1] for x in self.LOCATION_CHOICES if x[0] == self.location][0],
+            'Location Description': self.location_desc,
+            'Complaint Description': self.description,
+            'Created': self.created_at.strftime("%I:%M %p, %d %b %Y"),
+            'Last Updated': self.updated_at.strftime("%I:%M %p, %d %b %Y"),
+            'Reminder': self.reminder.strftime("%I:%M %p, %d %b %Y") if self.reminder else '',
+            'Rating': self.rating,
+            'Feedback': self.feedback,
+            'Status': "Active" if self.active else "Closed"
+        }
+
 
 class Notification(models.Model):
     msg = models.TextField(default="")

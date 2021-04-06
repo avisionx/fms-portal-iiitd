@@ -5,28 +5,41 @@
 
 {% block page_content %}
 <div class="container-fluid pt-1 pt-lg-3 d-flex h-100 flex-column">
-    <h2 class="text-info mb-0 font-weight-bold pt-2">Charts Analytics</h2>
-    <form method="GET" name="submit">
+    <div class="d-flex align-items-center">
+        <h2 class="text-info mb-0 font-weight-bold pt-2">Charts Analytics</h2>
+        <form method="POST" id="csv" class="row ml-auto">
+            {% csrf_token %}
+            <div class="form-group col-auto mt-2 ">
+                <input type="submit" form="csv" value="Export CSV" class="btn btn-primary w-100" />
+            </div>
+        </form>
+    </div>
+    <form method="GET">
         <div class="row">
-            <div class="form-group col-12 col-md-3 mt-2">
+            <div class="form-group col-12 col-lg-4 mt-2">
                 {{ filter.form.category | as_crispy_field }}
             </div>
-            <div class="form-group col-12 col-md-3 mt-2">
+            <div class="form-group col-12 col-lg-4 mt-2">
                 {{ filter.form.location | as_crispy_field }}
             </div>
-            <div class="form-group col-12 col-md-2 mt-2">
-                {{ filter.form.created_at | as_crispy_field }}
-            </div>
-            <div class="form-group col-6 col-md-2 mt-2">
+
+            <div class="form-group col-6 col-lg-2 mt-2">
                 {{ filter.form.active | as_crispy_field }}
             </div>
-            <div class="form-group col-6 col-md-1 mt-2">
+            <div class="form-group col-6 col-lg-2 mt-2">
                 {{ filter.form.rating | as_crispy_field }}
             </div>
-            <div class="form-group col-12 col-md-1 mt-2 d-flex align-items-end">
+            <div class="form-group col-12 col-lg-4 mt-2">
+                {{ filter.form.created_at | as_crispy_field }}
+            </div>
+            <div class="form-group col-12 col-lg-2 mt-2">
+                {{ filter.form.year | as_crispy_field }}
+            </div>
+            <div class="form-group col-12 col-lg-2 mt-2 ml-auto d-flex align-items-end">
                 <input type="submit" value="Search" class="btn btn-primary btn-success w-100">
             </div>
         </div>
+
     </form>
     <div class="row mt-4">
         <div class="col-12">
