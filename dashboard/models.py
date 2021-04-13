@@ -13,12 +13,14 @@ class ComplaintCategories(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return str(self.id) + ": " + str(self.name)
+        return str(self.name)
 
 
-def GetComplaintCategoryList():
-    return list(ComplaintCategories.objects.filter(
-        active=True).values_list('id', 'name'))
+def ComplaintCategories_ActiveList():
+    try:
+        return list(ComplaintCategories.objects.filter(active=True).values_list('id', 'name'))
+    except:
+        return []
 
 
 class LocationChoices(models.Model):
@@ -28,12 +30,14 @@ class LocationChoices(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return str(self.id) + ": " + str(self.name)
+        return str(self.name)
 
 
-def GetLocationChoicesList():
-    return list(LocationChoices.objects.filter(
-        active=True).values_list('id', 'name'))
+def LocationChoices_ActiveList():
+    try:
+        return list(LocationChoices.objects.filter(active=True).values_list('id', 'name'))
+    except:
+        return []
 
 
 def user_directory_path(instance, filename):
@@ -42,20 +46,14 @@ def user_directory_path(instance, filename):
 
 class Complaint(models.Model):
 
-    COMPLAINT_CATEGORIES = GetComplaintCategoryList()
-
-    LOCATION_CHOICES = GetLocationChoicesList()
-
     complaint_id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    category = models.IntegerField(
-        choices=COMPLAINT_CATEGORIES,
-        default=1
+    category = models.ForeignKey(
+        ComplaintCategories, on_delete=models.SET_NULL, null=True
     )
     description = models.TextField(default="", blank=True)
-    location = models.IntegerField(
-        choices=LOCATION_CHOICES,
-        default=1
+    location = models.ForeignKey(
+        LocationChoices, on_delete=models.SET_NULL, null=True
     )
     rating = models.IntegerField(
         default=0
@@ -72,14 +70,22 @@ class Complaint(models.Model):
         return "Complaint No: " + str(self.complaint_id)
 
     def csv(self):
+        try:
+            location = self.location.name
+        except:
+            location = ""
+        try:
+            category = self.category.name
+        except:
+            category = ""
         return {
             'Complaint ID': self.complaint_id,
             'First Name': self.customer.user.first_name,
             'Last Name': self.customer.user.last_name,
             'Email': self.customer.user.username,
             'Contact': self.customer.contact,
-            'Category': [x[1] for x in self.COMPLAINT_CATEGORIES if x[0] == self.category][0],
-            'Location': [x[1] for x in self.LOCATION_CHOICES if x[0] == self.location][0],
+            'Category': category,
+            'Location': location,
             'Location Description': self.location_desc,
             'Complaint Description': self.description,
             'Created': self.created_at.strftime("%I:%M %p, %d %b %Y"),
@@ -99,20 +105,6 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.msg
-
-
-def complaint_get_location(val):
-    for a, b in Complaint.LOCATION_CHOICES:
-        if a == val:
-            return b
-    return Complaint.LOCATION_CHOICES[0][1]
-
-
-def complaint_get_category(val):
-    for a, b in Complaint.COMPLAINT_CATEGORIES:
-        if a == val:
-            return b
-    return Complaint.COMPLAINT_CATEGORIES[0][1]
 
 
 def serialize(object):

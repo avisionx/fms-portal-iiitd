@@ -87,8 +87,8 @@ WSGI_APPLICATION = 'fms.wsgi.application'
 
 AUTHENTICATION_OSA_URL = os.getenv('AUTHENTICATION_OSA_URL')
 AUTHENTICATION_BACKENDS = [
+    'authentication.backends.FMSAdminBackend',
     'authentication.backends.OSAAuthBackend',
-    'authentication.backends.FMSAdminBackend'
 ]
 
 ADMIN_LOGIN = os.getenv('ADMIN_LOGIN')

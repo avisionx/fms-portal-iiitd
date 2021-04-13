@@ -4,22 +4,23 @@ from django import forms
 
 from dashboard.models import ComplaintCategories, LocationChoices
 
-from .models import Complaint, Notification
+from .models import (Complaint, ComplaintCategories, LocationChoices,
+                     Notification)
 
 
 class ComplaintForm(forms.Form):
 
-    category = forms.IntegerField(
+    category = forms.ModelChoiceField(
         label="Complaint Category",
-        widget=forms.Select(
-            choices=[('', "Select Category")] + Complaint.COMPLAINT_CATEGORIES),
+        empty_label="Select Category",
+        queryset=ComplaintCategories.objects.filter(active=True),
         required=True
     )
 
-    location = forms.IntegerField(
+    location = forms.ModelChoiceField(
+        empty_label="Select Location",
         label="Complaint Location",
-        widget=forms.Select(
-            choices=[('', "Select Location")] + Complaint.LOCATION_CHOICES),
+        queryset=LocationChoices.objects.filter(active=True),
         required=True
     )
 

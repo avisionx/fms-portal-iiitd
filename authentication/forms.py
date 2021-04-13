@@ -62,7 +62,6 @@ class FMSUserForm(forms.Form):
         password = settings.ADMIN_PASSWORD
         first_name = data["first_name"]
         last_name = data["last_name"]
-
         try:
             user = User.objects.create_user(
                 username=username,

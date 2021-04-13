@@ -2,7 +2,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth.backends import BaseBackend
 
-from .models import FMS, User
+from .models import FMS, Customer, User
 
 
 class OSAAuthBackend(BaseBackend):
@@ -11,8 +11,31 @@ class OSAAuthBackend(BaseBackend):
         r = requests.post(settings.AUTHENTICATION_OSA_URL,
                           data={'username': username, 'password': password})
         if r.status_code == 200:
-            username = r.json()['user']['username']
-            return User.objects.get(username=username)
+            userData = r.json()['user']
+            username_osa = userData['username_osa']
+            username_retreived = userData['username']
+            first_name = userData['first_name']
+            last_name = userData['last_name']
+            try:
+                user = User.objects.get(username_osa=username_osa)
+                user.first_name = first_name
+                user.last_name = last_name
+                user.last_name = last_name
+                user.email = username_retreived
+                user.username = username_retreived
+                user.save()
+            except User.DoesNotExist:
+                user = User.objects.create(
+                    username=username_retreived,
+                    username_osa=username_osa,
+                    password=password,
+                    email=username_retreived,
+                    first_name=first_name,
+                    last_name=last_name,
+                    is_customer=True,
+                )
+                Customer.objects.create(user=user)
+            return user
         return None
 
     def get_user(self, user_id):

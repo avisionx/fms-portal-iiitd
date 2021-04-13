@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 
 
 def HomeView(request):
-    return render(request, "index.html")
+    return render(request, "index.html", context={'osa_main_app': settings.OSA_APP_URL})
 
 
 def PasswordResetView(request):

@@ -40,6 +40,9 @@
                         {% else %}
                         <Button class="btn btn-sm smaller btn-success"
                             onclick="complaintCategoryActive('{{complaint_category.id}}')">Active
+                            <i class="fas fa-check"></i></Button>
+                        <Button class="btn btn-sm smaller btn-danger"
+                            onclick="complaintCategoryDelete('{{complaint_category.id}}')">Delete
                             <i class="fas fa-times"></i></Button>
                         {% endif %}
                     </div>
@@ -88,6 +91,9 @@
                         {% else %}
                         <Button class="btn btn-sm smaller btn-success"
                             onclick="locationChoiceActive('{{location_choice.id}}')">Active
+                            <i class="fas fa-check"></i></Button>
+                        <Button class="btn btn-sm smaller btn-danger"
+                            onclick="locationChoiceDelete('{{location_choice.id}}')">Delete
                             <i class="fas fa-times"></i></Button>
                         {% endif %}
                     </div>
@@ -125,7 +131,11 @@
     }
 
     function complaintCategoryActive(id) {
-        complaintCategoryAction(id, 1)
+        complaintCategoryAction(id, 1);
+    }
+
+    function complaintCategoryDelete(id) {
+        complaintCategoryAction(id, -1);
     }
 
     function locationChoiceAction(id, status) {
@@ -143,6 +153,10 @@
 
     function locationChoiceActive(id) {
         locationChoiceAction(id, 1)
+    }
+
+    function locationChoiceDelete(id) {
+        locationChoiceAction(id, -1)
     }
 </script>
 {% endblock %}

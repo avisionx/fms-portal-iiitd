@@ -6,7 +6,9 @@ from authentication.forms import FMSUserForm
 from authentication.models import FMS
 from dashboard.forms import (ComplaintCategoriesForm, LocationChoicesForm,
                              NotificationForm)
-from dashboard.models import ComplaintCategories, LocationChoices
+from dashboard.models import (ComplaintCategories,
+                              ComplaintCategories_ActiveList, LocationChoices,
+                              LocationChoices_ActiveList)
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -25,12 +27,11 @@ class ComplaintFilter(FilterSet):
 
     search = CharFilter(method='custom_search_filter', label='Search', widget=TextInput(
         attrs={'placeholder': 'Search by Complaint ID, Username, Email, Contact'}))
-
     category = ChoiceFilter(
-        field_name='category', empty_label='All', choices=Complaint.COMPLAINT_CATEGORIES, label='Complaint Category')
+        field_name='category', empty_label='All', choices=ComplaintCategories_ActiveList(), label='Complaint Category')
 
     location = ChoiceFilter(field_name='location',
-                            empty_label='All', choices=Complaint.LOCATION_CHOICES, label='Complaint Location')
+                            empty_label='All', choices=LocationChoices_ActiveList(), label='Complaint Location')
 
     rating = ChoiceFilter(field_name='rating',
                           empty_label='Any', choices=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), ), label='Rating')
@@ -62,10 +63,10 @@ class ComplaintFilter(FilterSet):
 class ChartFilter(FilterSet):
 
     category = ChoiceFilter(
-        field_name='category', empty_label='All', choices=Complaint.COMPLAINT_CATEGORIES, label='Complaint Category')
+        field_name='category', empty_label='All', choices=ComplaintCategories_ActiveList(), label='Complaint Category')
 
     location = ChoiceFilter(field_name='location',
-                            empty_label='All', choices=Complaint.LOCATION_CHOICES, label='Complaint Location')
+                            empty_label='All', choices=LocationChoices_ActiveList(), label='Complaint Location')
 
     rating = ChoiceFilter(field_name='rating',
                           empty_label='Any', choices=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), ), label='Rating')
@@ -98,10 +99,10 @@ class RemindersFilter(FilterSet):
         attrs={'placeholder': 'Search by Complaint ID, Username, Email, Contact'}))
 
     category = ChoiceFilter(
-        field_name='category', empty_label='All', choices=Complaint.COMPLAINT_CATEGORIES, label='Complaint Category')
+        field_name='category', empty_label='All', choices=ComplaintCategories_ActiveList(), label='Complaint Category')
 
     location = ChoiceFilter(field_name='location',
-                            empty_label='All', choices=Complaint.LOCATION_CHOICES, label='Complaint Location')
+                            empty_label='All', choices=LocationChoices_ActiveList(), label='Complaint Location')
 
     rating = ChoiceFilter(field_name='rating',
                           empty_label='Any', choices=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), ), label='Rating')
@@ -128,7 +129,11 @@ def dashboard(request):
     countActive = Complaint.objects.filter(
         active=True).count()
     countTotal = Complaint.objects.count()
-    activePercent = (countActive * 100) // countTotal
+
+    if countTotal <= 0:
+        countTotal = 1
+
+    activePercent = ((countTotal - countActive) * 100) // countTotal
 
     topComplaints = Complaint.objects.all().order_by('-created_at')[:3]
 
@@ -139,11 +144,16 @@ def dashboard(request):
     for (month, count) in yearCount:
         yearCounts[month - 1] = count
 
+    try:
+        lastComplaint = Complaint.objects.latest('created_at').complaint_id
+    except Complaint.DoesNotExist:
+        lastComplaint = 0
+
     context = {
         "dashboard_link": "active",
-        "last_complaint": Complaint.objects.latest('created_at').complaint_id,
+        "last_complaint": lastComplaint,
         "activePercent": activePercent,
-        "countActive": countActive,
+        "countActive": countTotal - countActive,
         "countTotal": countTotal,
         'complaints': topComplaints,
         'yearCounts': list(yearCounts)
@@ -200,15 +210,16 @@ def charts(request):
 
     if request.POST:
         complaints = filtered_complaints.qs
-        keys = complaints[0].csv().keys()
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="fms-complaints-' + \
-            datetime.now().strftime("%Y-%m-%d-%H:%M")+'.csv"'
-        writer = csv.writer(response)
-        writer.writerow(keys)
-        for complaint in filtered_complaints.qs:
-            writer.writerow(complaint.csv().values())
-        return response
+        if len(complaints) > 0:
+            keys = complaints[0].csv().keys()
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="fms-complaints-' + \
+                datetime.now().strftime("%Y-%m-%d-%H:%M")+'.csv"'
+            writer = csv.writer(response)
+            writer.writerow(keys)
+            for complaint in filtered_complaints.qs:
+                writer.writerow(complaint.csv().values())
+            return response
     return render(request, 'admin/charts.html', context)
 
 
@@ -397,9 +408,12 @@ def complaint_category_action(request):
     complaintcat = ComplaintCategories.objects.get(id=id)
     if int(status) == 1:
         complaintcat.active = True
+        complaintcat.save()
+    elif int(status) == -1:
+        complaintcat.delete()
     else:
         complaintcat.active = False
-    complaintcat.save()
+        complaintcat.save()
     return JsonResponse({"status": 200}, safe=False)
 
 
@@ -410,9 +424,12 @@ def location_choice_action(request):
     locationchoc = LocationChoices.objects.get(id=id)
     if int(status) == 1:
         locationchoc.active = True
+        locationchoc.save()
+    elif int(status) == -1:
+        locationchoc.delete()
     else:
         locationchoc.active = False
-    locationchoc.save()
+        locationchoc.save()
     return JsonResponse({"status": 200}, safe=False)
 
 

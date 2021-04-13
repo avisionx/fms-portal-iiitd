@@ -7,6 +7,7 @@ from django.utils import timezone
 
 class User(AbstractUser):
 
+    username_osa = models.CharField(max_length=150, unique=True)
     is_customer = models.BooleanField(default=False)
     is_fms = models.BooleanField(default=False)
 
@@ -19,7 +20,7 @@ class Customer(models.Model):
 
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True)
-    contact = models.IntegerField()
+    contact = models.IntegerField(null=True)
 
     class Meta:
         verbose_name = 'Customer'
