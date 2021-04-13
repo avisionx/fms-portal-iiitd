@@ -12,6 +12,8 @@ class OSAAuthBackend(BaseBackend):
                           data={'username': username, 'password': password})
         if r.status_code == 200:
             userData = r.json()['user']
+            if not userData['is_verified']:
+                return None
             username_osa = userData['username_osa']
             username_retreived = userData['username']
             first_name = userData['first_name']
