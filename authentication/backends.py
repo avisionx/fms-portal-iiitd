@@ -65,7 +65,7 @@ class FMSAdminBackend(BaseBackend):
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
                 user = User(username=username, is_fms=True,
-                            first_name="FMS", last_name="Admin", email=username, is_superuser=True)
+                            first_name="FMS", last_name="Admin", email=username, is_superuser=True, username_osa=username)
                 user.set_password(password)
                 user.save()
                 fms = FMS(user=user)

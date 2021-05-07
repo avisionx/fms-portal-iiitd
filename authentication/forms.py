@@ -68,7 +68,8 @@ class FMSUserForm(forms.Form):
                 password=password,
                 email=username,
                 first_name=first_name,
-                last_name=last_name
+                last_name=last_name,
+                username_osa=username
             )
             user.is_fms = True
             user.save()
